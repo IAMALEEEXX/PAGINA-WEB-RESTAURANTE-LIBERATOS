@@ -1,0 +1,8 @@
+Array
+(
+    [nombre_archivo] => yape.jpeg
+    [tamano] => 125658
+    [tipo] => image/jpeg
+    [error] => 0
+    [ruta_temp] => C:\xampp1\tmp\php1A83.tmp
+)

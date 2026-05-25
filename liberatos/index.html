@@ -1,0 +1,2469 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Liberatos - ¡La hamburguesa más deliciosa de la ciudad!</title>
+
+  <!-- 
+    - favicon
+  -->
+  <link rel="shortcut icon" href="./favicon.svg" type="image/svg+xml">
+
+  <!-- 
+    - enlace CSS personalizado
+  -->
+  <link rel="stylesheet" href="./assets/css/style.css">
+
+  <!-- 
+    - enlace de fuente de google
+  -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Rubik:wght@400;500;600;700&family=Shadows+Into+Light&display=swap"
+    rel="stylesheet">
+
+  <!-- 
+    - Imágenes de precarga
+  -->
+  <link rel="preload" as="image" href="./assets/images/hero-banner.png" media="min-width(768px)">
+  <link rel="preload" as="image" href="./assets/images/hero-banner-bg.png" media="min-width(768px)">
+  <link rel="preload" as="image" href="./assets/images/hero-bg.jpg">
+
+</head>
+
+<body id="top">
+
+  <!-- 
+  - #Cabeza
+-->
+
+<header class="header" data-header>
+  <div class="container">
+
+    <h1>
+      <a href="#" class="logo">liberatos<span class="span">.</span></a>
+    </h1>
+
+    <nav class="navbar" data-navbar>
+      <ul class="navbar-list">
+
+        <li class="nav-item">
+          <a href="#home" class="navbar-link" data-nav-link>casa</a>
+        </li>
+
+        <li class="nav-item">
+          <a href="#nosotros" class="navbar-link" data-nav-link>Sobre nosotros</a>
+        </li>
+
+        <li class="nav-item">
+          <a href="#menu-catalog" class="navbar-link" data-nav-link>Menu</a>
+        </li>
+
+        <li class="nav-item">
+          <a href="#contact" class="navbar-link" data-nav-link>Contacta con nosotros</a>
+        </li>
+
+      </ul>
+    </nav>
+<!-- 🔍 BOTÓN DE BÚSQUEDA -->
+<div class="header-btn-group">
+  <button class="Buscar-btn" aria-label="Buscar" data-search-btn>
+    <ion-icon name="search-outline"></ion-icon>
+  </button>
+</div>
+
+<!-- 🔎 PANEL DE BÚSQUEDA -->
+<div class="search-container" data-search-container>
+  <div class="search-box">
+    <input 
+      type="search" 
+      id="search-input"
+      class="search-input"
+      placeholder="Buscar en el menú (Ej: Clásica, Limonada, Tequeños...)"
+      autocomplete="off"
+    >
+    <button class="search-submit" aria-label="Buscar" data-search-submit-btn>
+      <ion-icon name="search-outline"></ion-icon>
+    </button>
+
+    <!-- 🔸 Sugerencias al costado -->
+    <ul class="search-suggestions" id="search-suggestions"></ul>
+  </div>
+
+  <button class="search-close-btn" aria-label="Cerrar búsqueda" data-search-close-btn>
+    <ion-icon name="close-outline"></ion-icon>
+  </button>
+</div>
+
+<style>
+/* Fondo sin línea blanca */
+.search-container {
+  position: fixed;
+  inset: 0;
+  display: none;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 120px;
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(6px);
+  z-index: 4000;
+}
+.search-container.active { display: flex; }
+
+/* Caja buscador */
+.search-box {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 20px;
+  padding: 8px 12px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+  position: relative;
+  z-index: 5000;
+}
+
+/* Input */
+.search-input {
+  width: 250px;
+  padding: 8px 10px;
+  border: 2px solid #ff7f11;
+  border-radius: 12px;
+  outline: none;
+  font-size: 0.95rem;
+}
+.search-input:focus {
+  border-color: #ff962f;
+  box-shadow: 0 0 6px rgba(255,127,17,0.5);
+}
+
+/* Botón */
+.search-submit {
+  background: #ff7f11;
+  border: none;
+  color: white;
+  border-radius: 10px;
+  padding: 8px 12px;
+  cursor: pointer;
+  margin-left: 6px;
+}
+.search-submit:hover { background: #ff962f; }
+
+/* Cerrar */
+.search-close-btn {
+  position: absolute;
+  top: 20px;
+  right: 25px;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 28px;
+  cursor: pointer;
+}
+
+/* ✅ Sugerencias al costado */
+.search-suggestions {
+  position: absolute;
+  top: 50%;
+  left: calc(100% + 10px);
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: transparent;
+  z-index: 6000;
+}
+.search-suggestions li {
+  background: #fff;
+  border: 2px solid #ff7f11;
+  border-radius: 10px;
+  padding: 6px 10px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all .2s;
+  white-space: nowrap;
+}
+.search-suggestions li:hover {
+  background: #ff7f11;
+  color: #fff;
+  transform: scale(1.05);
+}
+
+/* Resaltado en menú */
+.resaltado {
+  border: 3px solid #ff7f11;
+  border-radius: 14px;
+  box-shadow: 0 0 15px rgba(255,127,17,0.8);
+  animation: glow 1.8s ease-in-out infinite alternate;
+}
+@keyframes glow {
+  from { box-shadow: 0 0 6px rgba(255,127,17,0.4); }
+  to { box-shadow: 0 0 16px rgba(255,127,17,1); }
+}
+
+/* Palabra destacada */
+.highlight-word {
+  background: #fff3cd;
+  color: #ff7f11;
+  font-weight: bold;
+  padding: 1px 3px;
+  border-radius: 3px;
+}
+
+/* Mensaje flotante */
+.floating-msg {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #ff7f11;
+  color: white;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-weight: 600;
+  z-index: 99999;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+</style>
+
+<script>
+(function(){
+  const searchBtn = document.querySelector('[data-search-btn]');
+  const searchContainer = document.querySelector('[data-search-container]');
+  const searchCloseBtn = document.querySelector('[data-search-close-btn]');
+  const searchInput = document.getElementById('search-input');
+  const suggestionsList = document.getElementById('search-suggestions');
+
+  const items = [
+    "Alitas BBQ", "Alitas Broaster", "Pop Corn Chicken",
+    "Tequeños Lomito Saltado", "Limonada",
+    "Marley", "Stone", "Queen",
+    "Clásica", "Cheese", "Royal",
+    "Choripán", "Capuchino"
+  ];
+
+  // Mostrar / cerrar
+  searchBtn.addEventListener('click', () => {
+    searchContainer.classList.add('active');
+    searchInput.focus();
+  });
+  searchCloseBtn.addEventListener('click', cerrarBusqueda);
+  window.addEventListener('click', e => { if (e.target === searchContainer) cerrarBusqueda(); });
+
+  function cerrarBusqueda(){
+    searchContainer.classList.remove('active');
+    searchInput.value = '';
+    suggestionsList.innerHTML = '';
+  }
+
+  // Mensaje flotante con emoji
+  function mostrarMensaje(texto, tipo="info"){
+    const msg = document.createElement("div");
+    msg.classList.add("floating-msg");
+    msg.style.background = tipo === "error" ? "#e74c3c" : "#ff7f11";
+    msg.textContent = texto;
+    document.body.appendChild(msg);
+    setTimeout(()=>msg.remove(), 3000);
+  }
+
+  // Determinar emoji según palabra
+  function obtenerEmoji(nombre){
+    const t = nombre.toLowerCase();
+    if(t.includes("limonada") || t.includes("jugo") || t.includes("bebida")) return "🍹";
+    if(t.includes("alita") || t.includes("pollo") || t.includes("clásica") || t.includes("hamburguesa")) return "🍔";
+    if(t.includes("tequeño") || t.includes("choripán")) return "🌭";
+    if(t.includes("capuchino") || t.includes("café")) return "☕";
+    return "🍽️";
+  }
+
+  // Sugerencias al costado
+  searchInput.addEventListener('input', ()=>{
+    const value = searchInput.value.toLowerCase().trim();
+    suggestionsList.innerHTML = '';
+    if(!value) return;
+    const filtrados = items.filter(i => i.toLowerCase().includes(value));
+    if(!filtrados.length){
+      const li = document.createElement('li');
+      li.textContent = 'Sin resultados';
+      suggestionsList.appendChild(li);
+      return;
+    }
+    filtrados.forEach(i=>{
+      const li = document.createElement('li');
+      li.textContent = i;
+      li.onclick = ()=>buscarEnPagina(i);
+      suggestionsList.appendChild(li);
+    });
+  });
+
+  // Buscar en menú
+  function buscarEnPagina(palabra){
+    cerrarBusqueda();
+    const cards = document.querySelectorAll('.food-menu-card, .food-item');
+    let encontrados = [];
+    const palabraExacta = palabra.toLowerCase().trim();
+
+    cards.forEach(card=>{
+      const titulo = card.querySelector('.card-title, h3, h4');
+      const texto = titulo ? titulo.textContent.toLowerCase() : card.textContent.toLowerCase();
+
+      // coincidencia exacta o casi exacta
+      if (texto === palabraExacta || texto.includes(` ${palabraExacta}`) || texto.startsWith(palabraExacta)) {
+        encontrados.push(card);
+      }
+    });
+
+    if(encontrados.length > 0){
+      const emoji = obtenerEmoji(palabra);
+      mostrarMensaje(`Mostrando "${palabra}" ${emoji}`);
+      encontrados[0].scrollIntoView({behavior:'smooth', block:'center'});
+      encontrados.forEach(card=>{
+        card.classList.add('resaltado');
+        const titulo = card.querySelector('.card-title, h3, h4');
+        if(titulo){
+          titulo.innerHTML = titulo.textContent.replace(
+            new RegExp(`(${palabra})`, 'gi'),
+            '<span class="highlight-word">$1</span>'
+          );
+        }
+      });
+    }else{
+      mostrarMensaje(`No se encontró "${palabra}" 😕`, "error");
+    }
+
+    setTimeout(()=>{
+      encontrados.forEach(card=>{
+        card.classList.remove('resaltado');
+        const titulo = card.querySelector('.card-title, h3, h4');
+        if(titulo){ titulo.innerHTML = titulo.textContent; }
+      });
+    }, 5000);
+  }
+})();
+</script>
+
+
+
+
+
+<button class="resv-btn" id="resv-abrir">📅 Reservar mesa</button>
+
+<div id="resv-modal" class="resv-modal">
+  <div class="resv-modal-content">
+    <span class="resv-cerrar">&times;</span>
+    <h2>Hacer una Reservación</h2>
+    <p style="font-size: 0.9em; color: #666; margin-bottom: 15px;">
+      🕒 Horario de atención: <b>9:00 AM - 11:00 PM</b>
+    </p>
+
+    <form id="resv-form">
+      <div class="resv-campo">
+        <label>Nombre:</label>
+        <input type="text" name="nombre" required>
+      </div>
+
+      <div class="resv-campo">
+        <label>Correo:</label>
+        <input type="email" name="correo" required>
+      </div>
+
+      <div class="resv-campo">
+        <label>Número de personas:</label>
+        <input type="number" name="personas" min="1" required>
+      </div>
+
+      <div class="resv-campo">
+        <label>Fecha y hora:</label>
+        <input type="datetime-local" name="fecha" id="input-fecha" required>
+      </div>
+
+      <div class="resv-campo">
+        <label>Mensaje adicional:</label>
+        <textarea name="mensaje" placeholder="Ej: Quisiera una mesa cerca de la ventana..."></textarea>
+      </div>
+
+      <button type="submit" class="resv-btn-enviar">Guardar Reserva</button>
+    </form>
+  </div>
+</div>
+
+<div id="resv-mensaje" class="resv-mensaje"></div>
+
+<style>
+:root {
+  --resv-naranja: #ff7f11;
+  --resv-verde: #2ecc71;
+  --resv-rojo: #e74c3c;
+}
+
+/* BOTÓN PRINCIPAL */
+.resv-btn {
+  background: var(--resv-naranja);
+  color: white;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.1em;
+  transition: all 0.3s;
+}
+.resv-btn:hover {
+  background: #e06d0b;
+  transform: scale(1.05);
+}
+
+/* MODAL */
+.resv-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  justify-content: center;
+  align-items: flex-start;
+  z-index: 2100;
+  overflow-y: auto;
+  padding: 40px 0;
+}
+.resv-modal-content {
+  background: #fff;
+  border-radius: 16px;
+  padding: 25px;
+  width: 90%;
+  max-width: 420px;
+  position: relative;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+  margin: auto;
+  animation: resv-slideUp 0.4s ease forwards;
+}
+.resv-cerrar {
+  position: absolute;
+  top: 12px;
+  right: 18px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #222;
+}
+.resv-cerrar:hover { color: var(--resv-naranja); }
+
+.resv-campo { margin-bottom: 12px; }
+
+.resv-campo input,
+.resv-campo textarea {
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc; /* Corregí el borde negro raro que tenías */
+  font-size: 0.95em;
+}
+.resv-campo textarea { resize: vertical; }
+
+.resv-btn-enviar {
+  width: 100%;
+  padding: 10px;
+  background: var(--resv-naranja);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.resv-btn-enviar:hover {
+  background: #e06d0b;
+  transform: scale(1.03);
+}
+
+/* MENSAJE FLOTANTE */
+.resv-mensaje {
+  display: none;
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.85);
+  color: #fff;
+  padding: 16px 28px;
+  border-radius: 10px;
+  font-size: 18px;
+  text-align: center;
+  z-index: 9999;
+  animation: resv-aparecer 0.3s ease;
+}
+@keyframes resv-aparecer {
+  from { opacity: 0; transform: translate(-50%, -60%); }
+  to { opacity: 1; transform: translate(-50%, -50%); }
+}
+@keyframes resv-slideUp {
+  from { transform: translateY(50px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+</style>
+
+<script>
+const resvModal = document.getElementById('resv-modal');
+const resvAbrir = document.getElementById('resv-abrir');
+const resvCerrar = document.querySelector('.resv-cerrar');
+const resvForm = document.getElementById('resv-form');
+const resvMensaje = document.getElementById('resv-mensaje');
+const resvFecha = document.getElementById('input-fecha');
+
+// 📅 Limitar fecha entre hoy y 30 días
+function resvActualizarFechas() {
+  const ahora = new Date();
+  const tzOffset = ahora.getTimezoneOffset() * 60000;
+  const localISO = new Date(ahora - tzOffset).toISOString().slice(0, 16);
+  resvFecha.min = localISO;
+
+  const maxFecha = new Date(ahora.getTime() + 30 * 24 * 60 * 60 * 1000);
+  const maxISO = new Date(maxFecha - tzOffset).toISOString().slice(0, 16);
+  resvFecha.max = maxISO;
+}
+
+// 🟠 Mostrar / Ocultar modal
+resvAbrir.addEventListener('click', () => {
+  resvModal.style.display = 'flex';
+  resvActualizarFechas();
+});
+resvCerrar.addEventListener('click', () => resvModal.style.display = 'none');
+window.addEventListener('click', e => { if (e.target === resvModal) resvModal.style.display = 'none'; });
+
+// 🚨 VALIDAR HORA AL CAMBIAR (Feedback inmediato)
+resvFecha.addEventListener('change', function() {
+    const fechaSelect = new Date(this.value);
+    const hora = fechaSelect.getHours();
+    
+    // Si es antes de las 9 (0-8) o después de las 23 (23, pero permitimos hasta las 23:00 en punto, así que bloqueamos si hora > 23... o si quieres estricto cierre a las 23, bloqueamos >= 23)
+    // Lógica: Permitir 9:00 hasta 22:59.
+    if (hora < 9 || hora >= 23) {
+        resvMostrarMensaje("⛔ Nuestro horario es de 9:00 AM a 11:00 PM", false);
+        this.value = ""; // Borra la fecha seleccionada para obligar a elegir otra
+    }
+});
+
+// 💾 ENVÍO CON VALIDACIÓN FINAL
+resvForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const seleccionada = new Date(resvFecha.value);
+  const ahora = new Date();
+  const maxPermitida = new Date(ahora.getTime() + 30 * 24 * 60 * 60 * 1000);
+  const hora = seleccionada.getHours();
+
+  // 1. Validar pasado
+  if (seleccionada < ahora) {
+    resvMostrarMensaje("⚠️ No puedes seleccionar una hora pasada.", false);
+    return;
+  }
+  // 2. Validar futuro lejano
+  if (seleccionada > maxPermitida) {
+    resvMostrarMensaje("⚠️ Solo puedes reservar con hasta 30 días de anticipación.", false);
+    return;
+  }
+  
+  // 3. VALIDAR HORARIO (9am - 23pm)
+  // getHours() devuelve de 0 a 23.
+  // < 9 bloquea de 00:00 a 08:59
+  // >= 23 bloquea de 23:00 a 23:59 (Asumiendo que a las 23pm cierran y no aceptan reservas)
+  if (hora < 9 || hora >= 23) {
+      resvMostrarMensaje("⛔ Horario no disponible. Atendemos de 9am a 11pm.", false);
+      return;
+  }
+
+  const datos = new FormData(resvForm);
+  
+  // Simulación de envío (Asegúrate de que tu ruta PHP sea correcta)
+  try {
+      const resp = await fetch('backend/Clases/Reserva.php', { method: 'POST', body: datos });
+      const data = await resp.text();
+
+      if (data.includes('✅') || resp.ok) { // Ajusté esto para ser más tolerante si el PHP no devuelve el icono exacto
+        resvModal.style.display = 'none';
+        resvForm.reset();
+        resvMostrarMensaje("✅ ¡Reserva guardada con éxito!", true);
+      } else {
+        resvMostrarMensaje("❌ Error al guardar la reserva.", false);
+      }
+  } catch (err) {
+      console.error(err);
+      resvMostrarMensaje("❌ Error de conexión.", false);
+  }
+});
+
+// 💬 Mensaje flotante
+function resvMostrarMensaje(texto, exito = true) {
+  resvMensaje.textContent = texto;
+  resvMensaje.style.background = exito ? 'rgba(46, 204, 113, 0.9)' : 'rgba(231, 76, 60, 0.9)'; // Verde o Rojo
+  resvMensaje.style.display = 'block';
+  setTimeout(() => resvMensaje.style.display = 'none', 3500);
+}
+</script>
+    </div>
+  </div>
+</header>
+
+      </div>
+
+    </div>
+  </header>
+
+
+      <!-- 
+        - #casa
+      -->
+
+      <section class="hero" id="home" style="background-image: url('./assets/images/hero-bg.jpg')">
+        <div class="container">
+
+          <div class="hero-content">
+
+            <p class="hero-subtitle">Sabores refinados, servidos al instante</p>
+
+            <h2 class="h1 hero-title"> Cena una deliciosa hamburguesa en la ciudad!</h2>
+
+            <p class="hero-text">Una experiencia gastronómica rápida, pero inolvidable.</p>
+
+          </div>
+
+          <figure class="hero-banner">
+            <img src="./assets/images/hero-banner-bg.png" width="820" height="716" alt="" aria-hidden="true"
+              class="w-100 hero-img-bg">
+
+            <img src="./assets/images/hero-banner.png" width="700" height="637" loading="lazy" alt="Burger"
+              class="w-100 hero-img">
+          </figure>
+
+        </div>
+      </section>
+      <!-- 
+        - #PROMCION
+      -->
+
+      <section class="section section-divider white promo">
+        <div class="container">
+
+          <ul class="promo-list has-scrollbar">
+            
+
+            <li class="promo-item">
+              <div class="promo-card">
+
+                <div class="card-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" fill="none"
+                    xmlns:v="https://vecta.io/nano">
+                    <g clip-path="url(#A)" fill="#ff9d2d">
+                      <path
+                        d="M14.837 40.062c0 3.106 2.528 5.634 5.634 5.634s5.634-2.528 5.634-5.634a5.64 5.64 0 0 0-5.634-5.634c-3.106 0-5.634 2.527-5.634 5.634zm5.634-3.876a3.88 3.88 0 0 1 3.876 3.876 3.88 3.88 0 0 1-3.876 3.876 3.88 3.88 0 0 1-3.876-3.876 3.88 3.88 0 0 1 3.876-3.876zm4.22-20.523l-.2-9.292a1.6 1.6 0 0 0 1.089-1.514V1.599A1.6 1.6 0 0 0 23.981 0H16.96a1.6 1.6 0 0 0-1.599 1.599v3.259a1.6 1.6 0 0 0 1.09 1.514l-.201 9.292a10.3 10.3 0 0 1-2.194 6.117c-1.659 2.107-2.573 4.744-2.573 7.426v27.741A3.06 3.06 0 0 0 14.538 60h11.866a3.06 3.06 0 0 0 3.053-3.053v-27.74a12.06 12.06 0 0 0-2.573-7.426 10.3 10.3 0 0 1-2.194-6.117zM17.119 1.758h6.703v2.941h-6.703V1.758zm5.695 8.398h-4.687l.08-3.7h4.527l.08 3.7zM27.7 56.947a1.3 1.3 0 0 1-1.296 1.295H14.538c-.715 0-1.295-.581-1.295-1.295v-7.978H27.7v7.978zm0-25.703h-8.55a.88.88 0 0 0-.879.878.88.88 0 0 0 .879.879h8.55v14.21H13.242v-14.21h1.819a.88.88 0 0 0 .878-.879.88.88 0 0 0-.878-.878h-1.819v-2.037a10.29 10.29 0 0 1 2.196-6.338c1.602-2.034 2.514-4.579 2.57-7.167l.082-3.787h4.762l.081 3.787a12.08 12.08 0 0 0 2.57 7.167 10.29 10.29 0 0 1 2.196 6.338v2.037zm20.876-12.638c0-1.069-.567-2.026-1.438-2.519-.186-1.394-1.338-2.471-2.727-2.471a2.66 2.66 0 0 0-1.289.334 2.61 2.61 0 0 0-.274-.089c-.193-1.385-1.341-2.453-2.724-2.453-.896 0-1.721.456-2.23 1.188l-.226-.01c-1.262 0-2.34.894-2.658 2.119a2.8 2.8 0 0 0-1.113 1.131c-1.179.329-2.037 1.45-2.037 2.78.001.218.047.432.132.631l-.003.052v1.757a64.33 64.33 0 0 0 1.632 14.388l.141.613c1.294 5.63 1.871 9.946 1.871 13.995v4.586a.54.54 0 0 1-.038.201c-.004.008-.01.016-.013.024a.54.54 0 0 1-.196.23l-1.491.966c-.515.334-.822.899-.822 1.512v.625a1.71 1.71 0 0 0 .007.15c.002.026.005.051.008.077.001.007.001.014.002.022.002.015.005.028.008.043l.016.092a1.66 1.66 0 0 0 .034.133c.014.045.028.083.043.122.006.016.011.032.018.048a1.57 1.57 0 0 0 .055.119c.006.012.012.025.018.038a1.67 1.67 0 0 0 .07.119c.006.01.012.021.018.03.025.038.052.073.079.109.009.01.016.022.025.032.025.031.051.059.078.088.013.015.026.029.039.043a1.42 1.42 0 0 0 .07.065c.024.021.04.038.06.055s.037.028.055.042a1.37 1.37 0 0 0 .086.064c.015.01.031.019.046.028.03.019.059.039.091.056a2.17 2.17 0 0 0 .105.054c.023.011.045.022.066.031a1.83 1.83 0 0 0 .08.031 1.92 1.92 0 0 0 .088.031 1.73 1.73 0 0 0 .086.023c.029.008.059.016.085.021a1.58 1.58 0 0 0 .103.017 1.43 1.43 0 0 0 .076.011 1.94 1.94 0 0 0 .101.006 1.18 1.18 0 0 0 .08.003L45.561 60c.031-.001.058-.001.087-.003s.059-.003.088-.006a1.07 1.07 0 0 0 .087-.011c.034-.005.068-.01.098-.016h0c.035-.008.058-.013.078-.019.032-.008.065-.016.098-.027.02-.006.039-.013.059-.021a1.38 1.38 0 0 0 .103-.039c.015-.006.031-.013.045-.02s.026-.014.04-.021a2.01 2.01 0 0 0 .105-.054c.023-.013.046-.027.069-.042a1.93 1.93 0 0 0 .081-.054 1.46 1.46 0 0 0 .075-.056 2.01 2.01 0 0 0 .064-.053 1.78 1.78 0 0 0 .076-.069c.018-.017.035-.036.052-.054.024-.026.049-.052.071-.079.016-.019.031-.039.047-.059.021-.028.043-.054.062-.083s.033-.052.049-.079.031-.049.045-.074a1.77 1.77 0 0 0 .144-.342 1.62 1.62 0 0 0 .036-.14c.006-.029.011-.059.016-.089.002-.016.006-.031.008-.047l.003-.022.008-.075a1.68 1.68 0 0 0 .008-.15v-.624c0-.613-.307-1.178-.821-1.511l-.553-.358-.94-.609c-.035-.027-.083-.076-.132-.151a1.28 1.28 0 0 1-.047-.084c-.041-.081-.069-.163-.069-.22v-4.585c0-4.048.577-8.364 1.871-13.995l.141-.613a64.33 64.33 0 0 0 1.632-14.388V19.3c0-.018-.002-.035-.003-.052a1.63 1.63 0 0 0 .132-.626v-.016zm-14.012-1.108a.88.88 0 0 0 .792-.617c.108-.352.366-.618.688-.712a.88.88 0 0 0 .63-.79c.035-.58.471-1.033.993-1.033a.9.9 0 0 1 .35.071.88.88 0 0 0 1.174-.527c.145-.425.528-.722.932-.722.549 0 .995.498.995 1.109a1.23 1.23 0 0 1-.021.226.88.88 0 0 0 .968 1.036c.222-.026.438.029.625.159a.88.88 0 0 0 1.095-.073c.178-.163.395-.249.626-.249.549 0 .996.498.996 1.109a1.16 1.16 0 0 1-.005.114.88.88 0 0 0 .65.93c.219.058.408.198.544.386h-12.76c.173-.239.432-.398.728-.414h0zm10.634 39.787l.388.251c.006.004.011.01.015.016l.005.021v.619l-.001.013c-.003.011-.006.016-.009.02l-.052.017H34.892l-.02-.001-.022-.006c-.011-.008-.016-.017-.019-.031l-.001-.63c0-.015.007-.029.02-.037l1.491-.967a2.52 2.52 0 0 0 .135-.095l.023-.018a2.11 2.11 0 0 0 .111-.092c.097-.087.176-.168.248-.254h6.737a3.35 3.35 0 0 0 .102.118l.034.037c.026.026.051.052.078.077.013.013.027.025.041.038a1.97 1.97 0 0 0 .081.07l.039.032a1.81 1.81 0 0 0 .114.081l1.113.722zm1.491-36.227l-.018 1.463h-7.669a.88.88 0 0 0-.879.879.88.88 0 0 0 .879.879h7.603a62.7 62.7 0 0 1-1.502 10.774l-.141.613c-1.325 5.765-1.915 10.202-1.915 14.388v4.299H37.39v-4.299c0-4.187-.591-8.624-1.915-14.388l-.141-.613a62.6 62.6 0 0 1-1.503-10.774h1.08a.88.88 0 0 0 .879-.879.88.88 0 0 0-.879-.879h-1.146l-.019-1.463v-1.387h12.942v1.387z" />
+                    </g>
+                    <defs>
+                      <clipPath id="A">
+                        <path fill="#fff" d="M0 0h60v60H0z" />
+                      </clipPath>
+                    </defs>
+                  </svg>
+                </div>
+
+                <h3 class="h3 card-title">Refrescos</h3>
+
+                <p class="card-text">
+                  Refresca tu día con nuestras bebidas frías y naturales: jugos, gaseosas, batidos y más. ¡La combinación perfecta para acompañar tus comidas y disfrutar cada momento
+                </p>
+
+                <img src="./assets/images/promo-2.png" width="300" height="300" loading="lazy" alt="Soft Drinks"
+                  class="w-100 card-banner">
+
+              </div>
+            </li>
+
+            <li class="promo-item">
+              <div class="promo-card">
+
+                <div class="card-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" fill="none"
+                    xmlns:v="https://vecta.io/nano">
+                    <g clip-path="url(#A)" fill="#ff9d2d">
+                      <path
+                        d="M30.057 32.375c-5.536 0-10.04 4.504-10.04 10.04s4.504 10.04 10.04 10.04 10.04-4.504 10.04-10.04-4.504-10.04-10.04-10.04h0zm0 18.322c-4.567 0-8.282-3.715-8.282-8.282s3.715-8.282 8.282-8.282 8.282 3.715 8.282 8.282-3.715 8.282-8.282 8.282zM51.089 19.66h-.069l2.006-9.708c.148-.715.001-1.451-.402-2.018a2.29 2.29 0 0 0-1.582-.957l-3.385-.448a2.37 2.37 0 0 0-.754.022l.03-.252c.086-.732-.125-1.462-.578-2.002-.425-.506-1.018-.806-1.671-.843l-2.506-.143c.082-.712-.109-1.428-.532-1.975a2.39 2.39 0 0 0-1.633-.929L36.522.015a2.42 2.42 0 0 0-1.806.541 2.77 2.77 0 0 0-.993 1.879l-.318 3.293a2.49 2.49 0 0 0-.285-.351 2.4 2.4 0 0 0-1.728-.736h-3.467a2.37 2.37 0 0 0-1.285.379l-.249-2.586a2.77 2.77 0 0 0-.993-1.879 2.42 2.42 0 0 0-1.806-.541L20.1.407a2.39 2.39 0 0 0-1.633.929c-.423.547-.614 1.263-.532 1.975l-2.506.143c-.652.037-1.246.336-1.671.843-.454.54-.664 1.27-.578 2.002l.03.253a2.37 2.37 0 0 0-.754-.023l-3.385.448a2.29 2.29 0 0 0-1.582.957c-.403.567-.55 1.303-.402 2.018l2.006 9.708h-.069a1.99 1.99 0 0 0-1.965 2.332l6.267 36.353A1.99 1.99 0 0 0 15.292 60h29.53a1.99 1.99 0 0 0 1.965-1.655l6.267-36.353a1.99 1.99 0 0 0-1.965-2.332h0zM46.648 8.735c.167-.311.481-.504.78-.463l3.385.448c.196.026.314.141.379.233.121.171.163.406.114.644l-2.08 10.063h-1.285l.855-6.758a2.44 2.44 0 0 0-.535-1.872 2.28 2.28 0 0 0-1.652-.821l-.136-.007.173-1.467zm-1.199 3.175l1.072.055c.2.011.325.111.394.194.115.137.164.323.139.523l-.884 6.979h-4.106l.475-2.775a2.35 2.35 0 0 0-.32-1.641l.209-2.71a.83.83 0 0 1 .366-.627c.12-.079.261-.122.407-.114l2.248.115h.001zm-4.364-6.898h.035 0l3.465.197a.59.59 0 0 1 .425.218c.143.171.208.414.178.667l-.27 2.295-.203 1.723-1.426-.073c-1.337-.069-2.509.99-2.615 2.36l-.134 1.741-.822-.129.564-8.13c.033-.482.399-.872.803-.869h0zm-.28 11.577l-.541 3.161a1.99 1.99 0 0 0-1.268 1.197 9.56 9.56 0 0 1-3.458 4.419l-.516.335 1.413-9.801c.023-.163.109-.307.242-.405s.295-.138.458-.112l1.499.236 1.663.262a.61.61 0 0 1 .402.248c.096.134.134.297.106.46h0zm-7.294 6.349l1.962-20.334c.027-.275.154-.523.351-.683.106-.086.281-.184.503-.159l3.493.391a.64.64 0 0 1 .437.257c.15.194.213.46.174.73l-.031.211-.043.015-.055.019-.163.062-.041.018a2.48 2.48 0 0 0-.301.159l-.026.016-.176.123-.105.083-.019.016-.146.135-.035.036-.071.076-.074.087-.066.083-.048.065-.06.087-.064.103-.037.065-.063.12-.027.059-.055.126-.021.052-.056.162-.012.041-.041.152-.008.033-.034.181-.006.042-.021.192-.553 7.977-.566-.089a2.35 2.35 0 0 0-2.714 2.002l-1.209 8.388.025-1.099zM27.458 6.605c.091-.094.247-.206.469-.206h3.467c.221 0 .378.113.47.207a.91.91 0 0 1 .246.656l-.346 15.202-.343-6.567a2.67 2.67 0 0 0-.807-1.788c-.502-.485-1.151-.733-1.829-.697l-1.411.075-.03-1.154-.13-5.074c-.006-.251.082-.489.243-.654zm1.42 8.562c.248-.011.429.123.514.206.164.158.261.377.273.616l.579 11.097-.188.003a9.52 9.52 0 0 1-4.229-.982L24.83 16.2c-.024-.239.043-.47.183-.634.08-.093.22-.207.432-.218l3.433-.181zM19.859 2.41a.64.64 0 0 1 .438-.257l3.492-.391c.223-.025.396.073.503.159a1 1 0 0 1 .35.683l.946 9.805.03 1.171-.265.014c-.651.035-1.245.329-1.674.829a2.61 2.61 0 0 0-.598 1.954l.483 4.796-1.09-2.613-.888-12.8-.021-.191-.006-.042-.034-.181-.007-.031-.041-.157-.011-.037-.058-.166-.017-.044-.061-.141-.012-.027-.078-.149-.027-.048-.087-.139-.026-.037-.078-.107-.033-.043-.103-.121-.037-.039-.095-.095-.029-.029-.123-.107-.039-.031-.134-.1-.017-.011-.136-.086-.029-.017-.156-.083-.018-.009-.168-.073-.182-.062-.037-.216c-.039-.27.024-.536.174-.73zm-4.754 3.017a.59.59 0 0 1 .425-.217l3.467-.198h.002c.425-.012.801.379.834.869l.528 7.616-.436-1.046a2.67 2.67 0 0 0-1.362-1.412 2.59 2.59 0 0 0-.231-.091l-.24-.069c-.007-.001-.015-.004-.022-.005a2.42 2.42 0 0 0-.223-.039l-.028-.004-.22-.016c-.011 0-.021-.001-.031-.001s-.025-.001-.037-.001l-.116.005-.099.005-.148.02-.093.014-.16.039-.076.019-.232.083-1.052.44-.159-1.349-.47-3.995c-.029-.253.036-.496.179-.667zm-.991 8.519l.52-.218.523-.218h.001l2.128-.89a.7.7 0 0 1 .553.02.92.92 0 0 1 .465.488l4.377 10.488a9.55 9.55 0 0 1-1.561-2.67c-.3-.781-1.031-1.286-1.864-1.286h-3.199l-2.236-4.705c-.103-.217-.118-.457-.041-.659a.65.65 0 0 1 .073-.14c.055-.08.138-.159.26-.211zM8.81 9.596c-.049-.239-.008-.473.113-.644.065-.092.184-.206.38-.232l3.385-.448c.297-.039.612.152.78.463l.186 1.578.215 1.83-.433.181a2.35 2.35 0 0 0-1.297 1.344c-.248.649-.214 1.393.095 2.041l1.877 3.951h-3.222L8.81 9.596zm42.512 12.098l-2.776 16.102h-5.748a.88.88 0 0 0-.879.879.88.88 0 0 0 .879.879h5.445l-.914 5.302h-4.415a.88.88 0 0 0-.879.879.88.88 0 0 0 .879.879h4.112l-1.971 11.433c-.02.113-.118.196-.233.196h-29.53c-.115 0-.213-.082-.233-.196l-1.971-11.433H17.2a.88.88 0 0 0 .879-.879.88.88 0 0 0-.879-.879h-4.415l-.914-5.302h5.472a.88.88 0 0 0 .879-.879.88.88 0 0 0-.879-.879h-5.775L8.793 21.694c-.016-.09.02-.154.052-.192a.23.23 0 0 1 .181-.084h10.23a.24.24 0 0 1 .223.158 11.31 11.31 0 0 0 4.091 5.229c1.908 1.336 4.152 2.042 6.488 2.042l.364-.007.173-.007.152-.009a11.41 11.41 0 0 0 1.582-.206 11.25 11.25 0 0 0 4.218-1.813 11.31 11.31 0 0 0 4.091-5.229.24.24 0 0 1 .222-.158h10.23a.23.23 0 0 1 .232.277h0z" />
+                    </g>
+                    <defs>
+                      <clipPath id="A">
+                        <path fill="#fff" d="M0 0h60v60H0z" />
+                      </clipPath>
+                    </defs>
+                  </svg>
+                </div>
+
+                <h3 class="h3 card-title">Tequeños</h3>
+
+                <p class="card-text">
+                Crujientes, dorados y rellenos de queso derretido, nuestros tequeños se preparan al instante y se sirven con salsas caseras irresistibles para disfrutar en cada bocado.
+                </p>
+
+                <img src="./assets/images/promo-3.png" width="300" height="300" loading="lazy" alt="French Fry"
+                  class="w-100 card-banner">
+
+              </div>
+            </li>
+
+            <li class="promo-item">
+              <div class="promo-card">
+
+                <div class="card-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" fill="none"
+                    xmlns:v="https://vecta.io/nano">
+                    <g clip-path="url(#A)">
+                      <path
+                        d="M56.993 41.631v-2.214c0-.133-.01-.265-.023-.396.218-.131.421-.276.605-.435.815-.705 1.245-1.636 1.245-2.691 0-.903-.333-1.764-.907-2.429.451-.536.707-1.218.694-1.928a2.97 2.97 0 0 0-1.991-2.734 3.74 3.74 0 0 0 .368-1.622v-.645A3.25 3.25 0 0 0 60 23.301c0-.248-.052-6.13-4.59-11.715-2.306-2.839-5.359-5.087-9.075-6.682C41.841 2.974 36.345 1.994 30 1.992c-7.992.003-14.592 1.548-19.616 4.592a.88.88 0 1 0 .912 1.506C16.041 5.215 22.334 3.755 30 3.753c6.105.002 11.367.933 15.641 2.769 3.451 1.482 6.278 3.559 8.403 6.174 4.148 5.106 4.196 10.383 4.196 10.605 0 .819-.666 1.484-1.484 1.484H3.245c-.818 0-1.484-.666-1.484-1.484 0-.221.029-2.241 1.035-5.017 1.101-3.038 2.892-5.68 5.323-7.852a.88.88 0 1 0-1.173-1.313C.079 15.255 0 22.975 0 23.301a3.25 3.25 0 0 0 3.017 3.236v.645c0 .585.135 1.14.374 1.635a3.06 3.06 0 0 0-1.153.735 2.9 2.9 0 0 0-.845 2.099c.012.679.255 1.314.67 1.817-.574.665-.906 1.526-.906 2.428-.001 1.056.429 1.986 1.245 2.691.195.169.412.321.646.458a3.74 3.74 0 0 0-.021.373v2.212A3.25 3.25 0 0 0 0 44.866a13.19 13.19 0 0 0 13.172 13.172h33.656A13.19 13.19 0 0 0 60 44.866a3.25 3.25 0 0 0-3.007-3.235h0zm-.57-4.376c-.809.7-2.293.991-3.873.76-1.118-.164-1.707-.475-2.33-.805l-.439-.227 2-2.035c.249-.254.597-.4.953-.4h2.864a2.96 2.96 0 0 0 .805-.111 1.96 1.96 0 0 1 .656 1.46c0 .536-.214.993-.636 1.358h0zM4.778 26.546h50.445v.636c0 .683-.344 1.288-.867 1.65-.015.011-.03.02-.045.03a1.97 1.97 0 0 1-.115.07l-.04.023a2.09 2.09 0 0 1-.153.074 1.95 1.95 0 0 1-.187.069c-.007.002-.014.004-.021.006-.051.016-.103.029-.155.04l-.049.01c-.045.008-.091.016-.137.021l-.052.006c-.062.006-.124.01-.187.01H6.785a2.01 2.01 0 0 1-2.008-2.008v-.636zm-1.283 4.239a1.28 1.28 0 0 1 .906-.384h.428a3.75 3.75 0 0 0 1.957.549h46.428a3.89 3.89 0 0 0 .233-.008c.025-.001.049-.004.073-.006a3.78 3.78 0 0 0 .162-.017l.079-.01c.069-.01.137-.021.204-.035.028-.006.056-.013.085-.019l.138-.034c.035-.009.07-.019.104-.029s.074-.023.11-.035l.105-.035c.06-.022.12-.046.178-.071.035-.015.07-.032.105-.048s.065-.031.098-.047l.102-.053c.038-.021.077-.043.114-.065.023-.013.046-.025.069-.039h.48a1.2 1.2 0 0 1 1.193 1.17c.009.45-.266.877-.699 1.087h0c-.176.086-.361.13-.548.13h-2.864c-.825 0-1.631.337-2.209.927l-3.568 3.632c-.85.866-2.199.983-3.184.317l-.064-.044a2.4 2.4 0 0 1-.162-.125l-4.623-3.961a3.1 3.1 0 0 0-2.015-.745H4.347a1.18 1.18 0 0 1-.523-.123h0a1.19 1.19 0 0 1-.669-1.047c-.006-.307.115-.602.341-.833h0zm-.577 5.112a1.96 1.96 0 0 1 .65-1.453 2.93 2.93 0 0 0 .779.105H36.91a1.34 1.34 0 0 1 .87.321l3.655 3.132a6.22 6.22 0 0 1-.229.004c-1.159 0-1.685-.315-2.352-.715-.755-.452-1.611-.965-3.257-.965s-2.501.513-3.257.965c-.666.399-1.193.715-2.352.715s-1.686-.315-2.352-.715c-.755-.452-1.611-.965-3.257-.965s-2.502.513-3.257.965c-.667.399-1.193.715-2.352.715s-1.686-.315-2.352-.715c-.755-.452-1.611-.965-3.257-.965-1.739 0-2.587.45-3.407.884-.623.33-1.211.641-2.329.805-1.58.231-3.063-.06-3.872-.759a1.73 1.73 0 0 1-.635-1.359h0zm43.91 20.382H13.172c-6.292 0-11.412-5.12-11.412-11.412 0-.818.666-1.484 1.484-1.484h39.461a.88.88 0 1 0 0-1.761H4.788v-1.928c.5.104 1.033.159 1.587.159.426 0 .863-.032 1.306-.097 1.419-.208 2.205-.624 2.898-.991.716-.38 1.282-.679 2.583-.679 1.159 0 1.686.315 2.352.715.755.452 1.611.965 3.257.965s2.501-.513 3.256-.965c.667-.399 1.193-.715 2.352-.715s1.686.315 2.352.715c.755.452 1.611.965 3.257.965s2.501-.513 3.256-.965c.666-.399 1.193-.715 2.352-.715s1.686.315 2.352.715c.755.452 1.611.965 3.257.965.784 0 1.441-.114 2.073-.358.596.295 1.244.442 1.893.442 1.108 0 2.214-.428 3.042-1.27l.246-.25c.331.117.62.268.938.437.694.367 1.479.783 2.898.991.443.065.881.097 1.306.097.569 0 1.117-.058 1.63-.169v1.937h-8.431a.88.88 0 1 0 0 1.761h9.954c.819 0 1.484.666 1.484 1.484a11.43 11.43 0 0 1-11.412 11.412h0z"
+                        fill="#ff9d2d" />
+                    </g>
+                    <defs>
+                      <clipPath id="A">
+                        <path fill="#fff" d="M0 0h60v60H0z" />
+                      </clipPath>
+                    </defs>
+                  </svg>
+                </div>
+
+                <h3 class="h3 card-title">Hamburguesa</h3>
+
+                <p class="card-text">
+                  Jugosa, sabrosa y al instante, nuestra hamburguesa combina carne de primera, pan suave y frescos ingredientes. ¡Sabor auténtico que conquista a todos!
+                </p>
+
+                <img src="./assets/images/promo-4.png" width="300" height="300" loading="lazy" alt="Burger Kingo"
+                  class="w-100 card-banner">
+
+              </div>
+            </li>
+
+            <li class="promo-item">
+              <div class="promo-card">
+
+                <div class="card-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" fill="none"
+                    xmlns:v="https://vecta.io/nano">
+                    <g clip-path="url(#A)">
+                      <path
+                        d="M57.492 40.5h-9.248l1.652-.602c3.539-1.415 5.333-3.077 5.333-4.942 0-2.867-2.322-3.83-4.371-4.679-.878-.364-1.785-.741-2.529-1.252a.88.88 0 0 0-1.222.226.88.88 0 0 0 .226 1.222c.895.616 1.89 1.029 2.851 1.427 2.099.87 3.287 1.441 3.287 3.055 0 1.029-1.541 2.236-4.228 3.31-3.219 1.287-6.956 1.984-8.485 2.234H37.88c1.972-1.538 3.369-3.644 4.263-6.432 1.088-3.393 2.64-5.885 5.033-8.08.664-.609.959-1.469.856-2.286l5.013-3.729c.136-.101.324-.105.467-.009 1.086.729 2.203.929 3.23.577.81-.277 1.444-.858 1.787-1.635.356-.807.352-1.749-.011-2.585-.476-1.096-1.488-1.842-2.643-1.976.218-1.142-.191-2.332-1.094-3.114-.689-.597-1.587-.883-2.463-.785a2.99 2.99 0 0 0-2.095 1.216c-.643.874-.787 1.999-.417 3.254.049.165-.011.343-.147.442l-5.06 3.667c-.748-.343-1.657-.319-2.437.132-2.811 1.625-5.653 2.359-9.216 2.382-3.06.019-5.576.783-7.691 2.337-2.361 1.733-3.944 4.235-4.456 7.043-.516 2.828.112 5.627 1.767 7.882.462.629.995 1.197 1.585 1.698H13.017C6.254 39.138 2.966 35.766 2.966 30.192c0-4.24 1.895-8.611 5.199-11.992 3.571-3.654 8.341-5.667 13.43-5.667 5.83 0 11.891 2.127 16.629 5.835a.88.88 0 0 0 1.234-.151.88.88 0 0 0-.15-1.234c-5.041-3.945-11.497-6.209-17.712-6.209-5.566 0-10.782 2.201-14.687 6.196-3.622 3.706-5.7 8.525-5.7 13.22 0 4.76 2.103 8.21 6.259 10.308H2.509A2.51 2.51 0 0 0 0 43.009c0 1.383 1.125 2.509 2.509 2.509h3.187a.12.12 0 0 1 .112.075l.558 1.366a4.26 4.26 0 0 0 3.957 2.658h39.354a4.26 4.26 0 0 0 3.957-2.658l.558-1.365c.019-.046.063-.076.112-.076h3.187c1.383 0 2.508-1.126 2.508-2.509a2.51 2.51 0 0 0-2.508-2.509h0zm-6.801-23.718a2.17 2.17 0 0 0 .799-2.363c-.146-.493-.239-1.19.147-1.714a1.23 1.23 0 0 1 .874-.51c.391-.043.798.09 1.117.367a1.52 1.52 0 0 1 .475 1.623c-.138.44-.056.925.221 1.299s.711.598 1.172.598h0a1.52 1.52 0 0 1 1.407.94c.168.387.174.816.015 1.176-.101.228-.313.531-.749.681-.615.211-1.253-.087-1.68-.373a2.17 2.17 0 0 0-2.495.056l-4.752 3.535-1.35-1.839 4.798-3.476zm-26.71 20.98c-1.367-1.862-1.884-4.179-1.455-6.526.432-2.365 1.77-4.476 3.767-5.942 1.806-1.327 3.986-1.979 6.662-1.996 3.886-.025 6.996-.832 10.085-2.618.34-.196.742-.167.998.054a.73.73 0 0 1 .108.116l2.01 2.738c.028.038.053.08.074.127.141.316.048.712-.243.979-2.629 2.412-4.331 5.138-5.517 8.838-.818 2.549-2.093 4.433-3.9 5.759-.674.495-1.408.902-2.184 1.21H27.48c-1.403-.583-2.61-1.527-3.499-2.738h0zm33.511 5.998H18.744a.88.88 0 0 0-.879.879.88.88 0 0 0 .879.879h33.581l-.317.776a2.51 2.51 0 0 1-2.33 1.565H10.323a2.51 2.51 0 0 1-2.33-1.565l-.317-.776h6.979a.88.88 0 0 0 .879-.879.88.88 0 0 0-.879-.879H2.509a.75.75 0 1 1 0-1.502h54.983a.75.75 0 1 1 0 1.502h0z"
+                        fill="#ff9d2d" />
+                    </g>
+                    <defs>
+                      <clipPath id="A">
+                        <path fill="#fff" d="M0 0h60v60H0z" />
+                      </clipPath>
+                    </defs>
+                  </svg>
+                </div>
+
+                <h3 class="h3 card-title">pollo broaster</h3>
+
+                <p class="card-text">
+              Dorado, crujiente y lleno de sabor, nuestro pollo broaster se prepara con el toque perfecto de especias y cocción ideal. ¡Tierno por dentro, irresistible y con auténtico sabor casero!
+                </p>
+
+                <img src="./assets/images/promo-5.png" width="300" height="300" loading="lazy" alt="Chicken Masala"
+                  class="w-100 card-banner">
+
+              </div>
+            </li>
+
+          </ul>
+
+        </div>
+      </section>
+      <!-- ==========================
+     CHATBOT FLOTANTE - LIBERATOS 
+========================== -->
+<style>
+#liberatos-chat {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  width: 340px;
+  max-width: calc(100% - 40px);
+  font-family: "Poppins", Arial, sans-serif;
+  z-index: 4000;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+  border-radius: 14px;
+  overflow: hidden;
+  background: white;
+}
+#liberatos-chat .lc-header {
+  background: #ff7f11;
+  color: #fff;
+  padding: 12px 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+#liberatos-chat .lc-body { display:none; flex-direction:column; height:440px; }
+#liberatos-chat.open .lc-body { display:flex; }
+#liberatos-chat .lc-messages {
+  padding:12px;
+  overflow-y:auto;
+  flex:1;
+  background:#fffaf5;
+}
+.lc-msg { margin:8px 0; max-width:85%; padding:8px 12px; border-radius:12px; line-height:1.3; }
+.lc-msg.bot { background:#fff3dd; align-self:flex-start; color:#222; }
+.lc-msg.user { background:#ff7f11; color:white; align-self:flex-end; }
+#liberatos-chat .lc-input-wrap {
+  display:flex; gap:8px; padding:10px;
+  border-top:1px solid #eee; background:white;
+}
+#liberatos-chat .lc-input {
+  flex:1; padding:10px;
+  border-radius:8px; border:1px solid #ddd;
+  outline:none; font-size:0.95rem;
+}
+#liberatos-chat .lc-send {
+  background:#ff7f11; border:none; color:white;
+  padding:10px 12px; border-radius:8px; cursor:pointer;
+}
+</style>
+
+<div id="liberatos-chat">
+  <div class="lc-header" id="lc-toggle">💬 Chat Liberatos</div>
+  <div class="lc-body" id="lc-body">
+    <div class="lc-messages" id="lc-messages"></div>
+    <div class="lc-input-wrap">
+      <input id="lc-input" class="lc-input" placeholder="Escribe aquí...">
+      <button id="lc-send" class="lc-send">Enviar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* === CONFIGURACIÓN === */
+const urlPedido = "http://localhost/liberatos/backend/Clases/save_pedido.php";
+const urlReserva = "http://localhost/liberatos/backend/Clases/save_reserva.php";
+
+
+/* === ELEMENTOS === */
+const widget = document.getElementById("liberatos-chat");
+const toggle = document.getElementById("lc-toggle");
+const body = document.getElementById("lc-body");
+const input = document.getElementById("lc-input");
+const send = document.getElementById("lc-send");
+const messages = document.getElementById("lc-messages");
+
+/* === VARIABLES === */
+let flow = null;
+let datos = {};
+
+/* === PRECIOS DEL MENÚ (extraído de la carta) === */
+const preciosMenu2 = {
+  "Alitas BBQ": 19,
+  "Alitas Broaster": 19,
+
+  "Pop Corn Chicken": 15,
+  "Tequeños Rellenos (Lomito)": 15,
+  "Tequeños Lomito Saltado": 15,
+
+  "Limonada": 14,
+  "Limonada con Hierba Buena": 14,
+
+  "Marley (Melón y Papaya)": 10,
+  "Marley": 10,
+  "Stone (Maracuyá & Naranja)": 10,
+  "Stone": 10,
+  "Queen (Fresa & Papaya)": 10,
+  "Queen": 10,
+
+  "Clásica (120g)": 10,
+  "Clásica": 10,
+  "Cheese (120g)": 12,
+  "Cheese": 12,
+  "Royal (120g)": 13,
+  "Royal": 13,
+  "Choripán": 10,
+
+  "Capuchino": 10
+};
+
+/* === FUNCIONES DE CHAT === */
+function bot(msg) {
+  const d = document.createElement("div");
+  d.className = "lc-msg bot";
+  d.innerHTML = msg;
+  messages.appendChild(d);
+  messages.scrollTop = messages.scrollHeight;
+}
+function user(msg) {
+  const d = document.createElement("div");
+  d.className = "lc-msg user";
+  d.textContent = msg;
+  messages.appendChild(d);
+  messages.scrollTop = messages.scrollHeight;
+}
+function nowMysql() {
+  const t = new Date();
+  return `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,"0")}-${String(t.getDate()).padStart(2,"0")} ${String(t.getHours()).padStart(2,"0")}:${String(t.getMinutes()).padStart(2,"0")}:00`;
+}
+
+/* === TOGGLE === */
+toggle.onclick = ()=> widget.classList.toggle("open");
+input.addEventListener("keydown", e=>{ if(e.key==="Enter") enviar(); });
+send.onclick = enviar;
+
+/* === MENÚ === */
+const menu = {
+  alitas: ["Alitas BBQ", "Alitas Broaster"],
+  piqueos: ["Pop Corn Chicken", "Tequeños Rellenos (Lomito)", "Choripán"],
+  limonadas: ["Limonada"],
+  jugos: ["Marley (Melón y Papaya)", "Stone (Maracuyá & Naranja)", "Queen (Fresa & Papaya)"],
+  hamburguesas: ["Clásica (120g)", "Cheese (120g)", "Royal (120g)"],
+  otros: ["Capuchino"]
+};
+const categorias = Object.keys(menu);
+
+/* === FUNCIONES === */
+function enviar() {
+  const msg = input.value.trim();
+  if(!msg) return;
+  user(msg);
+  input.value="";
+  flujo(msg.toLowerCase());
+}
+function obtenerProducto(cat, entrada) {
+  const productos = menu[cat];
+  if(!productos) return null;
+  const i = parseInt(entrada);
+  if(!isNaN(i) && i>=1 && i<=productos.length) return productos[i-1];
+  return productos.find(p=>p.toLowerCase().includes(entrada.toLowerCase())) || null;
+}
+/* === FLUJO === */
+async function flujo(texto) {
+
+  // COMANDOS GENERALES
+  if(texto.includes("menu")) return mostrarMenu();
+  if(texto.includes("horario")) return bot("🕐 Nuestro horario es de <b>lunes a domingo de 9:00 a.m. a 11:00 p.m.</b>");
+  if(texto.includes("ubicacion") || texto.includes("donde")) return bot("📍 Nos encontramos en <b>Av. Sta. Elvira 6000, Los Olivos</b>.");
+
+  // --- SI NO HAY FLUJO DEFINIDO ---
+  if(flow === null){
+    if(texto.includes("pedido")) return startPedido();
+    if(texto.includes("reserva")) return startReserva();
+    bot("💬 Puedo ayudarte con <b>pedidos</b> o <b>reservas</b>.<br>También puedes escribir <b>menú</b>, <b>horario</b> o <b>ubicación</b>.");
+    return;
+  }
+
+  /* =========================================================
+   1. FUNCIONES AUXILIARES (DEFINICIONES)
+   ========================================================= */
+
+// Función principal para enviar datos al Backend (PHP)
+async function enviarAlBackend(datosPedido, archivoImagen) {
+    try {
+        const formData = new FormData();
+        
+        // Convertimos el objeto 'datos' a FormData para enviarlo
+        formData.append("nombre", datosPedido.nombre);
+        formData.append("telefono", datosPedido.telefono);
+        formData.append("categoria", datosPedido.categoria);
+        formData.append("plato", datosPedido.plato);
+        formData.append("precio_unitario", datosPedido.precio_unitario);
+        formData.append("cantidad", datosPedido.cantidad);
+        formData.append("direccion", datosPedido.direccion);
+        formData.append("correo", datosPedido.correo);
+        formData.append("subtotal", datosPedido.subtotal);
+        formData.append("metodo_pago", datosPedido.metodo_pago);
+
+        // Solo agregamos imagen si existe (caso Yape)
+        if (archivoImagen) {
+            formData.append("imagen_pago", archivoImagen);
+        }
+
+        // ⚠️ Asegúrate que esta ruta sea correcta en tu PC
+        const urlPedido = "http://localhost/liberatos/backend/Clases/Pedido.php"; 
+
+        const res = await fetch(urlPedido, {
+            method: "POST",
+            body: formData 
+        });
+
+        const r = await res.json();
+
+        if (r.success) {
+            let extra = archivoImagen ? "<br>✅ <b>Comprobante enviado.</b>" : "";
+            bot(`🎉 <b>Pedido Confirmado</b>${extra}<br><br>
+                👤 ${datosPedido.nombre}<br> 
+                🍔 ${datosPedido.plato} (x${datosPedido.cantidad})<br>
+                💰 Total: <b>S/${datosPedido.subtotal}</b>
+            `);
+        } else {
+            bot(`❌ Error del servidor: ${r.message}`);
+        }
+
+    } catch (error) {
+        console.error(error);
+        bot("❌ Error de conexión. Revisa que XAMPP esté encendido y la URL sea correcta.");
+    }
+}
+
+// Función expuesta a la ventana (window) para que el HTML del chat la pueda llamar
+window.enviarPedidoConFoto = async function(input) {
+    if (input.files && input.files[0]) {
+        const file = input.files[0];
+        
+        // Mensaje de feedback inmediato al usuario
+        bot(`🔄 <b>Subiendo comprobante...</b><br>Archivo: ${file.name}<br>Por favor espera.`);
+        
+        // Usamos la variable global 'datos' que ya tiene toda la info del pedido
+        await enviarAlBackend(datos, file);
+
+        // Limpiamos el flujo y los datos tras el éxito
+        flow = null;
+        datos = {};
+    }
+};
+
+
+/* =========================================================
+   2. LÓGICA DEL FLUJO DE PEDIDO
+   ========================================================= */
+
+if (flow === "pedido") {
+
+    // 1. NOMBRE 
+    if (!datos.nombre) {
+        datos.nombre = texto;
+        return bot("¿Tu número de teléfono? (ej: 9XXXXXXXX)");
+    }
+
+    // 2. TELÉFONO 
+    if (!datos.telefono) {
+        datos.telefono = texto;
+        return bot("Perfecto. ¿Qué categoría deseas?<br><br>1. Alitas<br>2. Piqueos<br>3. Limonadas<br>4. Jugos<br>5. Hamburguesas<br>6. Otros<br><br>Responde con el número o el nombre.");
+    }
+
+    // 3. CATEGORÍA
+    if (!datos.categoria) {
+        const i = parseInt(texto);
+        if (!isNaN(i) && i >= 1 && i <= categorias.length) datos.categoria = categorias[i - 1];
+        else datos.categoria = categorias.find(c => texto.includes(c)) || null;
+
+        if (!datos.categoria) return bot("Categoría no válida.");
+
+        const productos = menu[datos.categoria].map((p, idx) => `${idx + 1}. ${p}`).join("<br>");
+        return bot(`Has elegido <b>${datos.categoria.toUpperCase()}</b>.<br><br>${productos}<br><br>Responde con el número o nombre.`);
+    }
+
+    // 4. PLATO
+    if (!datos.plato) {
+        const prod = obtenerProducto(datos.categoria, texto);
+        if (!prod) return bot("Selecciona un número o producto válido.");
+
+        datos.plato = prod;
+        datos.precio_unitario = preciosMenu2[prod] || 0; // Asegúrate de tener 'preciosMenu2' definido arriba o fuera
+
+        if (datos.precio_unitario === 0) {
+            return bot("⚠ No encontré el precio del producto.");
+        }
+
+        return bot(`Has seleccionado <b>${prod}</b> (S/${datos.precio_unitario}). ¿Cuántas unidades deseas?`);
+    }
+
+    // 5. CANTIDAD
+    if (!datos.cantidad) {
+        datos.cantidad = parseInt(texto);
+        if(isNaN(datos.cantidad)) return bot("Introduce un número válido.");
+        return bot("¿Dirección de entrega o escribe 'recoger'?");
+    }
+
+    // 6. DIRECCIÓN
+    if (!datos.direccion) {
+        datos.direccion = texto;
+        return bot("¿Tu correo electrónico? (opcional, escribe 'no')");
+    }
+
+    // 7. CORREO (Preguntamos método de pago al final)
+    if (!datos.correo) {
+        datos.correo = (texto === "no") ? "Sin correo" : texto;
+
+        return bot(`¿Cómo deseas pagar?<br><br>
+        1. 📱 Yape / Plin (Requiere foto)<br>
+        2. 💵 Efectivo<br><br>
+        Responde con el número.`);
+    }
+
+    // 8. MÉTODO DE PAGO Y FINALIZACIÓN
+    if (!datos.metodo_pago) {
+        let metodo = "";
+        const t = texto.toLowerCase();
+
+        if (t.includes("1") || t.includes("yape") || t.includes("plin")) metodo = "Yape";
+        else if (t.includes("2") || t.includes("efectivo")) metodo = "Efectivo";
+        else return bot("Por favor selecciona <b>1</b> (Yape) o <b>2</b> (Efectivo).");
+
+        datos.metodo_pago = metodo;
+        
+        // Datos calculados
+        datos.fecha = new Date().toISOString().slice(0, 19).replace('T', ' '); 
+        datos.subtotal = datos.precio_unitario * datos.cantidad;
+
+        // --- OPCIÓN A: YAPE (Pide foto) ---
+        if (metodo === "Yape") {
+            return bot(`
+                <b>Paga con QR</b><br>
+                1. Yapea al <b>982-157-046</b>.<br>
+                2. Toca el botón naranja para subir la captura:<br><br>
+                <img src="./assets/images/yape.png" style="width:150px; border-radius:10px;"><br><br>
+                
+                <label style="background:#ff7f11; color:white; padding:10px 20px; border-radius:5px; cursor:pointer; font-weight:bold; display:inline-block;">
+                    📸 SUBIR COMPROBANTE
+                    <input type="file" accept="image/*" style="display:none;" onchange="window.enviarPedidoConFoto(this)">
+                </label>
+            `);
+        } 
+        
+        // --- OPCIÓN B: EFECTIVO (Envía directo) ---
+        else {
+            bot("⏳ Procesando pedido en Efectivo...");
+            
+            // Llamamos a la función que definimos arriba
+            enviarAlBackend(datos, null);
+            
+            // Reseteamos variables
+            flow = null;
+            datos = {};
+            return;
+        }
+    }
+}
+/* ----------------------------------- 
+   FLUJO COMPLETO DE RESERVA INTELIGENTE
+------------------------------------ */
+
+// =====================================
+// CONFIGURACIÓN DEL RESTAURANTE
+// =====================================
+const HORARIO_APERTURA = 9;    // 09:00 AM
+const HORARIO_CIERRE = 23;     // 23:00 PM
+
+// =====================================
+// FUNCIONES INTERNAS
+// =====================================
+
+// Días de la semana
+const diasSemana = {
+  "domingo": 0, "lunes": 1, "martes": 2, "miércoles": 3, "miercoles": 3,
+  "jueves": 4, "viernes": 5, "sábado": 6, "sabado": 6
+};
+
+// Sumar días
+function sumarDias(fecha, dias) {
+  const nueva = new Date(fecha);
+  nueva.setDate(nueva.getDate() + dias);
+  return nueva;
+}
+
+// ====== FECHAS ======
+function parseFechaNatural(texto) {
+  texto = texto.toLowerCase().trim();
+  const hoy = new Date();
+
+  if (texto.includes("hoy")) return hoy.toISOString().slice(0, 10);
+  if (texto.includes("mañana") || texto.includes("mñn")) return sumarDias(hoy, 1).toISOString().slice(0, 10);
+  if (texto.includes("pasado")) return sumarDias(hoy, 2).toISOString().slice(0, 10);
+
+  for (let dia in diasSemana) {
+    if (texto.includes(dia)) {
+      const hoyIndex = hoy.getDay();
+      const diaObj = diasSemana[dia];
+      let diff = diaObj - hoyIndex;
+      if (diff <= 0 || texto.includes("próximo") || texto.includes("proximo")) diff += 7;
+      return sumarDias(hoy, diff).toISOString().slice(0, 10);
+    }
+  }
+
+  const iso = texto.match(/(\d{4})-(\d{2})-(\d{2})/);
+  if (iso) return iso[0];
+
+  const latam = texto.match(/(\d{2})\/(\d{2})\/(\d{4})/);
+  if (latam) {
+    const [_, d, m, y] = latam;
+    return `${y}-${m}-${d}`;
+  }
+
+  return null;
+}
+
+// ====== HORAS ======
+function parseHoraNatural(texto) {
+  texto = texto.toLowerCase().trim();
+
+  // "en 2 horas"
+  const rel = texto.match(/en\s+(\d+)\s+horas?/);
+  if (rel) {
+    const h = parseInt(rel[1]);
+    const ahora = new Date();
+    ahora.setHours(ahora.getHours() + h);
+    return ahora.toTimeString().slice(0, 5);
+  }
+}
+function parseHoraNatural(texto) {
+  texto = texto.toLowerCase().trim();
+
+  // 1) Horas con AM/PM explícito: "9pm", "3 pm", "10:30pm"
+  let regex1 = /(\d{1,2})(?::(\d{2}))?\s*(am|pm)/;
+  let match1 = texto.match(regex1);
+
+  if (match1) {
+    let hora = parseInt(match1[1]);
+    let minuto = match1[2] ? parseInt(match1[2]) : 0;
+    const ampm = match1[3];
+
+    if (ampm === "pm" && hora < 12) hora += 12;
+    if (ampm === "am" && hora === 12) hora = 0;
+
+    return `${hora.toString().padStart(2, "0")}:${minuto.toString().padStart(2, "0")}`;
+  }
+
+  // 2) Formato 24h: "14:00"
+  let regex2 = /(\d{1,2}):(\d{2})/;
+  let match2 = texto.match(regex2);
+
+  if (match2) {
+    let hora = parseInt(match2[1]);
+    let minuto = parseInt(match2[2]);
+    if (hora >= 0 && hora <= 23 && minuto >= 0 && minuto <= 59) {
+      return `${hora.toString().padStart(2, "0")}:${minuto.toString().padStart(2, "0")}`;
+    }
+  }
+
+  // 3) Frases como “a las 9”, “a las 7”, “las 8”
+  let regex3 = /(a\s+las|las)\s+(\d{1,2})\b/;
+  let match3 = texto.match(regex3);
+
+  if (match3) {
+    return `${match3[2].padStart(2, "0")}:00`;
+  }
+
+  return null;
+}
+
+
+// ====== VALIDACIONES ======
+function validarHorario(hora) {
+  const [h] = hora.split(":").map(Number);
+  return h >= HORARIO_APERTURA && h < HORARIO_CIERRE;
+}
+
+function validarFechaHora(fecha, hora) {
+  const ahora = new Date();
+  const fechaCompleta = new Date(`${fecha}T${hora}:00`);
+  return fechaCompleta >= ahora;
+}
+
+// =====================================
+// INTELIGENCIA DE FRASES COMPLETAS
+// =====================================
+
+async function interpretarFraseCompleta(texto) {
+  texto = texto.toLowerCase();
+
+  // EXTRAER FECHA Y HORA EN PRIMER LUGAR
+  let fecha = parseFechaNatural(texto);
+  let hora = parseHoraNatural(texto);
+
+  // ===== PERSONAS =====
+  let personas = null;
+
+  // 1) "para 4", "somos 4", "somos 4 personas"
+  let match1 = texto.match(/(para|somos)\s+(\d+)/);
+  if (match1) personas = parseInt(match1[2]);
+
+  // 2) "4 personas", "4 persona", "4p", "4 pax"
+  let match2 = texto.match(/(\d+)\s*(personas|persona|pax|p)\b/);
+  if (match2) personas = parseInt(match2[1]);
+
+  // 3) Palabras: "cuatro", "cinco", etc.
+  const palabrasNumero = {
+    uno:1, dos:2, tres:3, cuatro:4, cinco:5,
+    seis:6, siete:7, ocho:8, nueve:9, diez:10
+  };
+  for (const p in palabrasNumero) {
+    if (texto.includes(p)) personas = palabrasNumero[p];
+  }
+
+  // 4) Números sueltos como personas SOLO SI NO son hora
+  if (!personas) {
+    let matchSolo = texto.match(/\b(\d{1,2})\b/g);
+
+    if (matchSolo) {
+      matchSolo.forEach(num => {
+        let n = parseInt(num);
+
+        // ❗ SI YA TENEMOS UNA HORA DETECTADA → NO USAR ESTE NÚMERO COMO HORA
+        if (hora) {
+          let hReal = parseInt(hora.split(":")[0]);
+          if (n === hReal) return; // es la hora detectable
+        }
+
+        // Rango razonable para personas
+        if (n >= 1 && n <= 20) personas = n;
+      });
+    }
+  }
+
+  return { fecha, hora, personas };
+}
+
+
+// =====================================
+// FLUJO PRINCIPAL DE RESERVA
+// =====================================
+
+if (flow === "reserva") {
+
+  // ======================================================
+  // ⭐ ETAPA DE INTELIGENCIA: FRASE COMPLETA (si ya dio nombre)
+  // ======================================================
+  if (datos.nombre) {
+    const auto = await interpretarFraseCompleta(texto);
+
+    if (auto.fecha && auto.hora && auto.personas) {
+
+      if (!validarHorario(auto.hora)) {
+        return bot(`⛔ Nuestro horario es de ${HORARIO_APERTURA}:00 a ${HORARIO_CIERRE}:00`);
+      }
+
+      if (!validarFechaHora(auto.fecha, auto.hora)) {
+        return bot("⛔ Esa hora ya pasó. Indica una hora futura.");
+      }
+
+      datos.fecha = auto.fecha;
+      datos.hora = auto.hora;
+      datos.personas = auto.personas;
+      datos.notas = "";
+
+      bot("⏳ Guardando tu reserva...");
+
+      const res = await fetch(urlReserva, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(datos)
+      });
+
+      const r = await res.json();
+
+      if (r.success) {
+        bot(`🎉 <b>Reserva confirmada</b><br><br>
+        👤 Nombre: ${datos.nombre}<br>
+        📅 Fecha: ${datos.fecha}<br>
+        🕒 Hora: ${datos.hora}<br>
+        👥 Personas: ${datos.personas}<br>
+        📝 Notas: Ninguna`);
+      } else {
+        bot(`❌ Error: ${r.message}`);
+      }
+
+      flow = null;
+      datos = {};
+      return;
+    }
+  }
+
+  // ======================================================
+  // 🔥 MODO NORMAL PASO-A-PASO
+  // ======================================================
+
+  if (!datos.nombre) {
+    datos.nombre = texto;
+    return bot("¿Para qué fecha deseas reservar?\nEjemplos:\n👉 mañana\n👉 viernes\n👉 próximo martes\n👉 2025-12-01");
+  }
+
+  if (!datos.fecha) {
+    const fecha = parseFechaNatural(texto);
+    if (!fecha) return bot("❗ No entendí la fecha. Ejemplos: mañana, viernes, 2025-12-05");
+    datos.fecha = fecha;
+    return bot("¿A qué hora? Ejemplos:\n👉 3pm\n👉 14:00\n👉 8 de la noche\n👉 en 2 horas");
+  }
+
+  if (!datos.hora) {
+    const hora = parseHoraNatural(texto);
+    if (!hora) return bot("❗ No entendí la hora. Ej: 3pm, 14:00, 8 de la noche");
+
+    if (!validarHorario(hora)) {
+      return bot(`⛔ Nuestro horario es de ${HORARIO_APERTURA}:00 a ${HORARIO_CIERRE}:00`);
+    }
+
+    if (!validarFechaHora(datos.fecha, hora)) {
+      return bot("⛔ Esa hora ya pasó. Indica una hora futura.");
+    }
+
+    datos.hora = hora;
+    return bot("¿Para cuántas personas será la reserva?");
+  }
+
+  if (!datos.personas) {
+    const n = parseInt(texto);
+    if (isNaN(n) || n <= 0) return bot("Por favor indica un número válido.");
+    datos.personas = n;
+    return bot("¿Deseas agregar alguna nota? (opcional, escribe 'no')");
+  }
+
+  if (!datos.notas) {
+    datos.notas = (texto === "no") ? "" : texto;
+
+    bot("⏳ Guardando tu reserva...");
+
+    const res = await fetch(urlReserva, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(datos)
+    });
+
+    const r = await res.json();
+
+    if (r.success) {
+      bot(`🎉 <b>Reserva confirmada</b><br><br>
+      👤 Nombre: ${datos.nombre}<br>
+      📅 Fecha: ${datos.fecha}<br>
+      🕒 Hora: ${datos.hora}<br>
+      👥 Personas: ${datos.personas}<br>
+      📝 Notas: ${datos.notas || "Ninguna"}`);
+    } else {
+      bot(`❌ Error: ${r.message}`);
+    }
+
+    flow = null;
+    datos = {};
+    return;
+  }
+}
+
+  }
+  
+
+
+/* === INICIO === */
+function startPedido(){ flow="pedido"; datos={}; bot("Perfecto 😄 ¿Cuál es tu nombre?"); }
+function startReserva(){ flow="reserva"; datos={}; bot("Genial 🎸 ¿A qué nombre hago la reserva?"); }
+function mostrarMenu(){
+  let m = "🍽️ <b>Menú Liberatos</b><br><br>";
+  for(const c in menu){
+    m += `<b>${c.toUpperCase()}:</b><br>• ${menu[c].join("<br>• ")}<br><br>`;
+  }
+  bot(m + "¿Deseas hacer un pedido o una reserva?");
+}
+
+/* === MENSAJE INICIAL === */
+bot("👋 ¡Hola! Soy el asistente virtual de <b>Liberatos</b>.<br>Puedo ayudarte con <b>pedidos</b> o <b>reservas</b>.<br>También puedes preguntar por <b>menú</b>, <b>ubicación</b> o <b>horario</b>.");
+</script>
+
+
+
+
+
+      
+
+      <!-- 
+        - #NOSOTROS
+      -->
+
+      <section class="section section-divider gray about" id="nosotros">
+        <div class="container">
+
+          <div class="about-banner">
+            <img src="./assets/images/about-banner.png" width="509" height="459" loading="lazy" alt="Burger with Drinks"
+              class="w-100 about-img">
+
+            <img src="./assets/images/sale-shape-red.png" width="216" height="226" alt="get up to 50% off now"
+              class="abs-img scale-up-anim">
+          </div>
+
+          <div class="about-content">
+
+            <h2 class="h2 section-title">
+              Cafe, hamburguesas y las mejores pizzas
+              <span class="span">en la ciudad!</span>
+            </h2>
+
+            <p class="section-text">
+              Bienvenidos a Liberatos, tu mejor opción en comida rápida. Disfruta de nuestras pizzas, hamburguesas, papas fritas, pollo broaster y mucho más, preparados con ingredientes frescos y el mejor sabor. ¡En Liberatos, comer rico es una experiencia!
+            </p>
+
+            <ul class="about-list">
+
+              <li class="about-item">
+                <ion-icon name="checkmark-outline"></ion-icon>
+
+                <span class="span">Alimentos deliciosos </span>
+              </li>
+
+              <li class="about-item">
+                <ion-icon name="checkmark-outline"></ion-icon>
+
+                <span class="span">Zona familiar y infantil</span>
+              </li>
+
+              <li class="about-item">
+                <ion-icon name="checkmark-outline"></ion-icon>
+
+                <span class="span">Música y otras instalaciones</span>
+              </li>
+
+              <li class="about-item">
+                <ion-icon name="checkmark-outline"></ion-icon>
+
+                <span class="span">Entrega de comida a domicilio más rápida</span>
+              </li>
+
+            </ul>
+      <button class="ord-btn" id="ord-abrir">🛒 Hacer Pedido</button>
+
+<div id="ord-modal" class="ord-modal">
+  <div class="ord-modal-content">
+    <span class="ord-cerrar">&times;</span>
+    <h2>Hacer un Pedido</h2>
+
+    <form id="ord-form">
+      <div class="ord-campo">
+        <label>Nombre:</label>
+        <input type="text" name="nombre" required>
+      </div>
+
+      <div class="ord-campo">
+        <label>Teléfono:</label>
+        <input type="tel" name="telefono" required pattern="[0-9]{9}" placeholder="Ej: 987654321">
+      </div>
+
+      <div class="ord-campo">
+        <label>Correo:</label>
+        <input type="email" name="correo" required>
+      </div>
+
+      <div class="ord-campo">
+        <label>Dirección:</label>
+        <textarea name="direccion" required></textarea>
+      </div>
+
+      <div class="ord-campo">
+        <label>Método de Pago:</label>
+        <select name="metodo_pago" id="metodo_pago" required>
+          <option value="">Seleccione</option>
+          <option value="Yape">Yape</option>
+          <option value="Plin">Plin</option>
+          <option value="Efectivo">Efectivo</option>
+        </select>
+      </div>
+
+      <div class="ord-campo">
+        <label>Categoría:</label>
+        <select name="categoria" id="ord-categoria" required>
+          <option value="">-- Selecciona una categoría --</option>
+          <option value="Alitas">🍗 Alitas</option>
+          <option value="Piqueos">🍟 Piqueos</option>
+          <option value="Hamburguesas">🍔 Hamburguesas</option>
+          <option value="Limonadas">🍋 Limonadas</option>
+          <option value="Jugos">🥤 Jugos</option>
+          <option value="Bebidas Calientes">☕ Bebidas Calientes</option>
+        </select>
+      </div>
+
+      <div class="ord-campo" id="ord-opciones" style="display:none;">
+        <label>Selecciona tu plato o bebida:</label>
+        <select id="ord-opcion"></select>
+      </div>
+
+      <div class="ord-campo">
+        <label>Cantidad:</label>
+        <input type="number" name="cantidad" min="1" value="1" required>
+      </div>
+
+      <button type="submit" class="ord-btn-enviar">Continuar</button>
+    </form>
+  </div>
+</div>
+
+<div id="ord-mensaje" class="ord-mensaje"></div>
+
+<div id="qr-modal" class="ord-modal">
+  <div class="ord-modal-content" style="max-width:520px;">
+    <span id="qr-cerrar" class="ord-cerrar">&times;</span>
+    <h3>Confirmar Pago</h3>
+
+    <p id="qr-texto" style="text-align:center; margin-bottom:10px;"></p>
+
+    <img id="qr-img" src="" style="width:200px; margin:auto; display:block; border-radius:12px; border:2px solid #eee;">
+
+    <div style="background:#f9f9f9; padding:15px; border-radius:8px; margin-top:15px; border:1px dashed #ccc;">
+        <label style="display:block; margin-bottom:8px; font-weight:bold;">📸 Sube tu comprobante:</label>
+        <input id="qr-captura" type="file" accept="image/*" required style="width:100%;" />
+        <small style="display:block; margin-top:5px; color:#e74c3c;">* Es obligatorio subir la captura para procesar el pedido.</small>
+    </div>
+
+    <button id="qr-upload" class="ord-btn-enviar" style="margin-top:15px;">
+      ✅ Verificar Pago y Enviar Pedido
+    </button>
+
+    <button id="qr-cancel" class="ord-btn-enviar" style="margin-top:10px; background:#bdc3c7; color:#333;">
+      Cancelar
+    </button>
+  </div>
+</div>
+
+<style>
+:root { --ord-naranja: #ff7f11; --ord-verde: #2ecc71; --ord-rojo: #e74c3c; }
+.ord-btn { background: var(--ord-naranja); color: white; padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-size: 1.1em; transition: 0.3s; }
+.ord-btn:hover { background: #e06d0b; transform: scale(1.05); }
+
+.ord-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); justify-content: center; align-items: flex-start; z-index: 2200; overflow-y: auto; padding: 40px 0; }
+.ord-modal-content { background: #fff; border-radius: 16px; padding: 25px; width: 90%; max-width: 420px; position: relative; margin: auto; animation: ord-slideUp 0.4s ease forwards; }
+.ord-cerrar { position: absolute; top: 12px; right: 18px; font-size: 24px; cursor: pointer; }
+.ord-campo { margin-bottom: 12px; }
+.ord-campo input, .ord-campo textarea, .ord-campo select { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc; }
+.ord-btn-enviar { width: 100%; padding: 12px; background: var(--ord-naranja); color: #fff; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; }
+.ord-btn-enviar:hover { background: #e06d0b; }
+.ord-mensaje { display: none; position: fixed; top: 20%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.85); color: white; padding: 16px 28px; border-radius: 10px; font-size: 18px; z-index: 9999; text-align: center;}
+@keyframes ord-slideUp { from{ transform: translateY(50px); opacity:0;} to{ transform: translateY(0); opacity:1;} }
+</style>
+
+<script>
+// --- DATOS Y VARIABLES ---
+const preciosMenu = {
+  "Alitas BBQ": 19, "Alitas Broaster": 19, "Pop Corn Chicken": 15, 
+  "Tequeños Rellenos (Lomito)": 15, "Tequeños Lomito Saltado": 15,
+  "Limonada": 14, "Limonada con Hierba Buena": 14, "Marley": 10, 
+  "Marley (Melón y Papaya)": 10, "Stone": 10, "Stone (Maracuyá & Naranja)": 10,
+  "Queen": 10, "Queen (Fresa & Papaya)": 10, "Clásica": 10, "Clásica (120g)": 10,
+  "Cheese": 12, "Cheese (120g)": 12, "Royal": 13, "Royal (120g)": 13,
+  "Choripán": 10, "Capuccino": 10
+};
+
+// Selectores del DOM
+const ordModal = document.getElementById('ord-modal');
+const ordForm = document.getElementById('ord-form');
+const ordMensaje = document.getElementById('ord-mensaje');
+const ordCategoria = document.getElementById('ord-categoria');
+const ordOpciones = document.getElementById('ord-opciones');
+const ordOpcion = document.getElementById('ord-opcion');
+
+// Selectores QR
+const qrModal = document.getElementById('qr-modal');
+const qrImg = document.getElementById('qr-img');
+const qrTexto = document.getElementById('qr-texto');
+const qrCaptura = document.getElementById('qr-captura');
+const qrUpload = document.getElementById('qr-upload');
+const qrCancel = document.getElementById('qr-cancel');
+const qrCerrar = document.getElementById('qr-cerrar');
+
+// --- ABRIR / CERRAR MODAL PRINCIPAL ---
+document.getElementById('ord-abrir').addEventListener('click', () => ordModal.style.display = 'flex');
+document.querySelector('.ord-cerrar').addEventListener('click', () => ordModal.style.display = 'none');
+
+// --- OPCIONES DINÁMICAS ---
+const opcionesPorCategoria = {
+  "Alitas": ["Alitas BBQ", "Alitas Broaster"],
+  "Piqueos": ["Pop Corn Chicken", "Tequeños Rellenos (Lomito)", "Tequeños Lomito Saltado"],
+  "Hamburguesas": ["Clásica", "Cheese", "Royal", "Clásica (120g)", "Cheese (120g)", "Royal (120g)"],
+  "Limonadas": ["Limonada", "Limonada con Hierba Buena"],
+  "Jugos": ["Marley", "Marley (Melón y Papaya)", "Queen", "Stone"],
+  "Bebidas Calientes": ["Capuccino"]
+};
+
+ordCategoria.addEventListener('change', () => {
+  const seleccion = ordCategoria.value;
+  if (opcionesPorCategoria[seleccion]) {
+    ordOpciones.style.display = 'block';
+    ordOpcion.innerHTML = opcionesPorCategoria[seleccion]
+      .map(op => `<option value="${op}">${op}</option>`).join('');
+  } else {
+    ordOpciones.style.display = 'none';
+  }
+});
+
+// ==========================================
+// 🚀 LÓGICA PRINCIPAL DE ENVÍO
+// ==========================================
+
+ordForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  // 1. Validaciones básicas
+  const tel = ordForm.telefono.value.trim();
+  if (!/^9\d{8}$/.test(tel)) {
+    mostrarNotificacion("⚠️ El teléfono debe tener 9 dígitos y empezar con 9", false);
+    return;
+  }
+
+  // 2. Preparar Datos Base
+  const formData = new FormData(ordForm);
+  const plato = ordOpcion.value.trim();
+  const cantidad = parseInt(ordForm.cantidad.value);
+  const precio = preciosMenu[plato] ?? 0;
+  
+  formData.append("plato", plato);
+  formData.append("precio_unitario", precio);
+  formData.append("subtotal", precio * cantidad);
+
+  const metodoPago = formData.get("metodo_pago");
+
+  // 3. DECISIÓN DE FLUJO SEGÚN MÉTODO DE PAGO
+  if (metodoPago === "Yape" || metodoPago === "Plin") {
+    // ➡️ FLUJO A: Abrir modal QR para subir foto
+    abrirModalQR(formData, metodoPago);
+  } else {
+    // ➡️ FLUJO B: Envío directo (Efectivo)
+    enviarPedidoAlBackend(formData, false);
+  }
+});
+    // ➡️ FLUJO B: Guardado directo (Efectivo/Tarjeta)
+
+// ==========================================
+// 📸 FLUJO A: MODAL QR Y SUBIDA DE FOTO
+// ==========================================
+
+function abrirModalQR(formDataOriginal, metodo) {
+  // Configurar imagen y texto según Yape o Plin
+  if (metodo === "Yape") {
+    qrImg.src = "./assets/images/yape.png"; // Asegúrate que esta ruta exista
+    qrTexto.innerText = "Yapea al **982-157-046** y sube la captura aquí.";
+  } else {
+    qrImg.src = "./assets/images/yape.png"; // Asegúrate que esta ruta exista
+    qrTexto.innerText = "Plinea al **982-157-046** y sube la captura aquí.";
+  }
+
+  qrCaptura.value = ""; // Limpiar input file anterior
+  qrModal.style.display = "flex";
+
+  // CLIC EN VERIFICAR Y ENVIAR (Dentro del modal QR)
+  qrUpload.onclick = () => {
+    // 1. Verificar si el usuario subió la imagen
+    if (qrCaptura.files.length === 0) {
+      alert("⚠️ Por favor, selecciona la imagen de la captura del pago.");
+      return;
+    }
+
+    // 2. Clonar los datos del formulario y añadir la imagen
+    const datosFinales = new FormData();
+    // Copiamos los datos del pedido original
+    for (const pair of formDataOriginal.entries()) {
+      datosFinales.append(pair[0], pair[1]);
+    }
+    // Añadimos la imagen
+    datosFinales.append("imagen_pago", qrCaptura.files[0]);
+
+    // 3. Enviar al backend
+    qrUpload.innerText = "Verificando y enviando...";
+    qrUpload.disabled = true;
+
+    enviarPedidoAlBackend(datosFinales, true); // true indica que viene del QR
+  };
+
+  // Botones de cancelar
+  const cerrarQR = () => { qrModal.style.display = "none"; };
+  qrCancel.onclick = cerrarQR;
+  qrCerrar.onclick = cerrarQR;
+}
+
+// ==========================================
+// 📡 FUNCIÓN UNIFICADA DE ENVÍO AL SERVER
+// ==========================================
+
+async function enviarPedidoAlBackend(datos, esQR = false) {
+  try {
+    // Aquí se envía al PHP. El PHP debe:
+    // 1. Recibir la imagen (si existe).
+    // 2. Enviar el correo con los datos y la imagen adjunta.
+    // 3. Si el correo se envió (verificación true), guardar en BD.
+    
+    const resp = await fetch("./backend/Clases/Pedido.php", {
+      method: "POST",
+      body: datos
+    });
+
+    const rjson = await resp.json();
+
+    if (rjson.success === true) {
+      // ✅ ÉXITO
+      if(esQR) qrModal.style.display = "none";
+      ordModal.style.display = "none";
+      ordForm.reset();
+      ordOpciones.style.display = "none";
+      
+      const msg = esQR 
+        ? "✅ Comprobante enviado y verificado. ¡Pedido guardado!" 
+        : "✅ Pedido registrado correctamente.";
+      mostrarNotificacion(msg, true);
+      
+      if(esQR) {
+        qrUpload.innerText = "✅ Verificar Pago y Enviar Pedido";
+        qrUpload.disabled = false;
+      }
+
+    } else {
+      // ❌ ERROR DEL BACKEND
+      alert("Error: " + (rjson.message || "No se pudo guardar el pedido."));
+      if(esQR) {
+        qrUpload.innerText = "Reintentar envío";
+        qrUpload.disabled = false;
+      }
+    }
+
+  } catch (err) {
+    console.error(err);
+    mostrarNotificacion("❌ Error de conexión con el servidor", false);
+    if(esQR) {
+      qrUpload.innerText = "Reintentar envío";
+      qrUpload.disabled = false;
+    }
+  }
+}
+
+// Notificación visual
+function mostrarNotificacion(texto, exito) {
+  ordMensaje.textContent = texto;
+  ordMensaje.style.background = exito ? "rgba(46, 204, 113, 0.95)" : "rgba(231, 76, 60, 0.95)";
+  ordMensaje.style.display = "block";
+  setTimeout(() => ordMensaje.style.display = "none", 4000);
+}
+</script>
+
+          </div>
+
+        </div>
+      </section>
+
+
+      </ul>
+          </div>
+  <!-- =========================
+  CARTA COMPLETA - LIBERATOS (Secciones por categoría, fondo blanco)
+  Pegar debajo del encabezado / banner
+========================= -->
+
+<section id="menu-catalog" class="menu-catalog" style="background:#ffffff;padding:60px 0;">
+  <div class="container" style="max-width:1100px;margin:0 auto;padding:0 18px;">
+
+    <!-- Header + buscador + filtro -->
+    <div class="menu-header" style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;justify-content:space-between;margin-bottom:22px;">
+      <div style="flex:1 1 320px;">
+        <p class="section-subtitle" style="margin:0;color:#666;font-weight:600">Platos Populares</p>
+        <h2 class="h2 section-title" style="margin:6px 0 0;font-size:28px;color:#222">
+          Nuestra Carta <span class="span" style="color:#ff7f11">Deliciosa</span>
+        </h2>
+        <p style="color:#666;margin:8px 0 0;max-width:720px">Selecciona una categoría o usa el buscador para encontrar un plato. Puedes ordenar desde cualquier tarjeta.</p>
+      </div>
+
+      <div style="display:flex;gap:8px;align-items:center;">
+        <input id="menu-search" type="search" placeholder="Buscar plato o categoría..." style="padding:10px 12px;border:1px solid #e6e6e6;border-radius:10px;min-width:220px;">
+        <button id="search-clear" title="Borrar búsqueda" style="background:transparent;border:1px solid #eee;padding:8px 10px;border-radius:10px;cursor:pointer">✖</button>
+      </div>
+    </div>
+
+    <!-- Botones filtro (Todo / Alitas / Piqueos / Hamburguesas / Limonadas / Bebidas Calientes) -->
+    <ul class="filter-list" style="display:flex;gap:10px;flex-wrap:wrap;list-style:none;padding:0;margin:18px 0 28px;">
+      <li><button class="filter-btn active" data-filter="all" style="background:#ff7f11;color:#fff;padding:10px 16px;border-radius:8px;border:none;cursor:pointer">Todo</button></li>
+      <li><button class="filter-btn" data-filter="alitas" style="background:#f0f0f0;padding:10px 16px;border-radius:8px;border:none;cursor:pointer">Alitas</button></li>
+      <li><button class="filter-btn" data-filter="piqueos" style="background:#f0f0f0;padding:10px 16px;border-radius:8px;border:none;cursor:pointer">Piqueos</button></li>
+      <li><button class="filter-btn" data-filter="hamburguesas" style="background:#f0f0f0;padding:10px 16px;border-radius:8px;border:none;cursor:pointer">Hamburguesas</button></li>
+      <li><button class="filter-btn" data-filter="limonadas" style="background:#f0f0f0;padding:10px 16px;border-radius:8px;border:none;cursor:pointer">Limonadas</button></li>
+      <li><button class="filter-btn" data-filter="jugos" style="background:#f0f0f0;padding:10px 16px;border-radius:8px;border:none;cursor:pointer">Jugos</button></li>
+      <li><button class="filter-btn" data-filter="bebidascalientes" style="background:#f0f0f0;padding:10px 16px;border-radius:8px;border:none;cursor:pointer">Bebidas Calientes</button></li>
+    </ul>
+
+    <!-- GRID DE TARJETAS -->
+    <ul class="food-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;padding:0;margin:0;list-style:none;">
+
+      <!-- ======= ALITAS / BROASTER ======= -->
+      <li class="food-item" data-category="alitas" data-name="Alitas BBQ">
+        <article class="card" style="background:#fff;border-radius:14px;box-shadow:0 8px 28px rgba(0,0,0,0.08);overflow:hidden;display:flex;flex-direction:column;height:100%;">
+          <div class="card-media" style="height:170px;overflow:hidden;">
+            <img src="./assets/images/alitas.jpg" alt="Alitas BBQ" style="width:100%;height:100%;object-fit:cover;display:block;">
+          </div>
+          <div class="card-body" style="padding:14px;flex:1;display:flex;flex-direction:column;">
+            <p class="category" style="font-size:13px;color:#ff7f11;margin:0 0 6px;font-weight:700">Alitas</p>
+            <h3 style="margin:0 0 8px;font-size:18px;color:#222">Alitas BBQ</h3>
+            <p style="color:#666;font-size:14px;flex:1;margin:0 0 12px">6 alitas bañadas en salsa BBQ casera, acompañadas de papas y camote. Opciones de salsa: BBQ, Buffalo, Ajo.</p>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div style="font-weight:800;color:#222">S/19</div>
+              <a class="order-btn" href="#" data-name="Alitas BBQ" data-price="S/19" style="margin-left:auto;background:#ff7f11;color:#fff;padding:10px 12px;border-radius:10px;text-decoration:none;font-weight:700;cursor:pointer" target="_blank">Ordenar ahora</a>
+            </div>
+          </div>
+        </article>
+      </li>
+
+      <li class="food-item" data-category="alitas" data-name="Alitas Broaster">
+        <article class="card" style="background:#fff;border-radius:14px;box-shadow:0 8px 28px rgba(0,0,0,0.08);overflow:hidden;display:flex;flex-direction:column;height:100%;">
+          <div class="card-media" style="height:170px;overflow:hidden;">
+            <img src="./assets/images/alitasbroaster.jpg" alt="Alitas Broaster" style="width:100%;height:100%;object-fit:cover;display:block;">
+          </div>
+          <div class="card-body" style="padding:14px;flex:1;display:flex;flex-direction:column;">
+            <p class="category" style="font-size:13px;color:#ff7f11;margin:0 0 6px;font-weight:700">Alitas</p>
+            <h3 style="margin:0 0 8px;font-size:18px;color:#222">Alitas Broaster</h3>
+            <p style="color:#666;font-size:14px;flex:1;margin:0 0 12px">6 alitas crujientes al estilo broaster, con papas y camote. Servidas calientes y doradas.</p>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div style="font-weight:800;color:#222">S/19</div>
+              <a class="order-btn" href="#" data-name="Alitas Broaster" data-price="S/19" style="margin-left:auto;background:#ff7f11;color:#fff;padding:10px 12px;border-radius:10px;text-decoration:none;font-weight:700;cursor:pointer" target="_blank">Ordenar ahora</a>
+            </div>
+          </div>
+        </article>
+      </li>
+
+      <li class="food-item" data-category="piqueos" data-name="Pop Corn Chicken">
+        <article class="card" style="background:#fff;border-radius:14px;box-shadow:0 8px 28px rgba(0,0,0,0.08);overflow:hidden;display:flex;flex-direction:column;height:100%;">
+          <div class="card-media" style="height:170px;overflow:hidden;">
+            <img src="./assets/images/finger chicken.jpg" alt="Pop Corn Chicken" style="width:100%;height:100%;object-fit:cover;display:block;">
+          </div>
+          <div class="card-body" style="padding:14px;flex:1;display:flex;flex-direction:column;">
+            <p class="category" style="font-size:13px;color:#ff7f11;margin:0 0 6px;font-weight:700">Piqueos</p>
+            <h3 style="margin:0 0 8px;font-size:18px;color:#222">Pop Corn Chicken</h3>
+            <p style="color:#666;font-size:14px;flex:1;margin:0 0 12px">Trozos de pollo crocante acompañados de papas, salsas y ensalada fresca.</p>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div style="font-weight:800;color:#222">S/15</div>
+              <a class="order-btn" href="#" data-name="Pop Corn Chicken" data-price="S/15" style="margin-left:auto;background:#ff7f11;color:#fff;padding:10px 12px;border-radius:10px;text-decoration:none;font-weight:700;cursor:pointer" target="_blank">Ordenar ahora</a>
+            </div>
+          </div>
+        </article>
+      </li>
+
+      <li class="food-item" data-category="piqueos" data-name="Tequeños Lomito Saltado">
+        <article class="card" style="background:#fff;border-radius:14px;box-shadow:0 8px 28px rgba(0,0,0,0.08);overflow:hidden;display:flex;flex-direction:column;height:100%;">
+          <div class="card-media" style="height:170px;overflow:hidden;">
+            <img src="./assets/images/tequeñosrellenos.jpg" alt="Tequeños Rellenos" style="width:100%;height:100%;object-fit:cover;display:block;">
+          </div>
+          <div class="card-body" style="padding:14px;flex:1;display:flex;flex-direction:column;">
+            <p class="category" style="font-size:13px;color:#ff7f11;margin:0 0 6px;font-weight:700">Piqueos</p>
+            <h3 style="margin:0 0 8px;font-size:18px;color:#222">Tequeños Rellenos (Lomito)</h3>
+            <p style="color:#666;font-size:14px;flex:1;margin:0 0 12px">Tequeños rellenos con lomito saltado: un piqueo sabroso y contundente.</p>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div style="font-weight:800;color:#222">S/15</div>
+              <a class="order-btn" href="#" data-name="Tequeños Lomito Saltado" data-price="S/15" style="margin-left:auto;background:#ff7f11;color:#fff;padding:10px 12px;border-radius:10px;text-decoration:none;font-weight:700;cursor:pointer" target="_blank">Ordenar ahora</a>
+            </div>
+          </div>
+        </article>
+      </li>
+
+      <!-- ======= LIMONADAS ======= -->
+      <li class="food-item" data-category="limonadas" data-name="Limonada">
+        <article class="card" style="background:#fff;border-radius:14px;box-shadow:0 8px 28px rgba(0,0,0,0.08);overflow:hidden;display:flex;flex-direction:column;height:100%;">
+          <div class="card-media" style="height:170px;overflow:hidden;">
+            <img src="./assets/images/limonada clasica.jpg" alt="Limonada" style="width:100%;height:100%;object-fit:cover;display:block;">
+          </div>
+          <div class="card-body" style="padding:14px;flex:1;display:flex;flex-direction:column;">
+            <p class="category" style="font-size:13px;color:#ff7f11;margin:0 0 6px;font-weight:700">Limonadas</p>
+            <h3 style="margin:0 0 8px;font-size:18px;color:#222">Limonada</h3>
+            <p style="color:#666;font-size:14px;flex:1;margin:0 0 12px">Refrescante limonada clásica, ideal para acompañar cualquier plato.</p>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div style="font-weight:800;color:#222">S/14</div>
+              <a class="order-btn" href="#" data-name="Limonada" data-price="S/14" style="margin-left:auto;background:#ff7f11;color:#fff;padding:10px 12px;border-radius:10px;text-decoration:none;font-weight:700;cursor:pointer" target="_blank">Ordenar ahora</a>
+            </div>
+          </div>
+        </article>
+      </li>
+
+      <!-- ======= JUGOS (ejemplos con imágenes disponibles) ======= -->
+      <li class="food-item" data-category="jugos" data-name="Marley">
+        <article class="card" style="background:#fff;border-radius:14px;box-shadow:0 8px 28px rgba(0,0,0,0.08);overflow:hidden;display:flex;flex-direction:column;height:100%;">
+          <div class="card-media" style="height:170px;overflow:hidden;">
+            <img src="./assets/images/jugomelonypapaya.jpg" alt="Marley" style="width:100%;height:100%;object-fit:cover;display:block;">
+          </div>
+          <div class="card-body" style="padding:14px;flex:1;display:flex;flex-direction:column;">
+            <p class="category" style="font-size:13px;color:#ff7f11;margin:0 0 6px;font-weight:700">Jugos</p>
+            <h3 style="margin:0 0 8px;font-size:18px;color:#222">Marley (Melón y Papaya)</h3>
+            <p style="color:#666;font-size:14px;flex:1;margin:0 0 12px">Jugo 16oz sin leche, fresco y natural.</p>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div style="font-weight:800;color:#222">S/10</div>
+              <a class="order-btn" href="#" data-name="Marley" data-price="S/10" style="margin-left:auto;background:#ff7f11;color:#fff;padding:10px 12px;border-radius:10px;text-decoration:none;font-weight:700;cursor:pointer" target="_blank">Ordenar ahora</a>
+            </div>
+          </div>
+        </article>
+      </li>
+
+      <li class="food-item" data-category="jugos" data-name="Stone">
+        <article class="card" style="background:#fff;border-radius:14px;box-shadow:0 8px 28px rgba(0,0,0,0.08);overflow:hidden;display:flex;flex-direction:column;height:100%;">
+          <div class="card-media" style="height:170px;overflow:hidden;">
+            <img src="./assets/images/jugodemaracuyaynaranja.jpg" alt="Stone" style="width:100%;height:100%;object-fit:cover;display:block;">
+          </div>
+          <div class="card-body" style="padding:14px;flex:1;display:flex;flex-direction:column;">
+            <p class="category" style="font-size:13px;color:#ff7f11;margin:0 0 6px;font-weight:700">Jugos</p>
+            <h3 style="margin:0 0 8px;font-size:18px;color:#222">Stone (Maracuyá & Naranja)</h3>
+            <p style="color:#666;font-size:14px;flex:1;margin:0 0 12px">Jugo 16oz sin leche, refrescante y natural.</p>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div style="font-weight:800;color:#222">S/10</div>
+              <a class="order-btn" href="#" data-name="Stone" data-price="S/10" style="margin-left:auto;background:#ff7f11;color:#fff;padding:10px 12px;border-radius:10px;text-decoration:none;font-weight:700;cursor:pointer" target="_blank">Ordenar ahora</a>
+            </div>
+          </div>
+        </article>
+      </li>
+
+      <li class="food-item" data-category="jugos" data-name="Queen">
+        <article class="card" style="background:#fff;border-radius:14px;box-shadow:0 8px 28px rgba(0,0,0,0.08);overflow:hidden;display:flex;flex-direction:column;height:100%;">
+          <div class="card-media" style="height:170px;overflow:hidden;">
+            <img src="./assets/images/jugodefresaypapaya.jpg" alt="Queen" style="width:100%;height:100%;object-fit:cover;display:block;">
+          </div>
+          <div class="card-body" style="padding:14px;flex:1;display:flex;flex-direction:column;">
+            <p class="category" style="font-size:13px;color:#ff7f11;margin:0 0 6px;font-weight:700">Jugos</p>
+            <h3 style="margin:0 0 8px;font-size:18px;color:#222">Queen (Fresa & Papaya)</h3>
+            <p style="color:#666;font-size:14px;flex:1;margin:0 0 12px">Jugo 16oz sin leche, dulce y natural.</p>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div style="font-weight:800;color:#222">S/10</div>
+              <a class="order-btn" href="#" data-name="Queen" data-price="S/10" style="margin-left:auto;background:#ff7f11;color:#fff;padding:10px 12px;border-radius:10px;text-decoration:none;font-weight:700;cursor:pointer" target="_blank">Ordenar ahora</a>
+            </div>
+          </div>
+        </article>
+      </li>
+
+      <!-- ======= HAMBURGUESAS (ejemplos; imágenes donde hay) ======= -->
+      <li class="food-item" data-category="hamburguesas" data-name="Clásica">
+        <article class="card" style="background:#fff;border-radius:14px;box-shadow:0 8px 28px rgba(0,0,0,0.08);overflow:hidden;display:flex;flex-direction:column;height:100%;">
+          <div class="card-media" style="height:170px;overflow:hidden;">
+            <img src="./assets/images/hamburguesa.jpg" alt="Clásica" style="width:100%;height:100%;object-fit:cover;display:block;">
+          </div>
+          <div class="card-body" style="padding:14px;flex:1;display:flex;flex-direction:column;">
+            <p class="category" style="font-size:13px;color:#ff7f11;margin:0 0 6px;font-weight:700">Hamburguesas</p>
+            <h3 style="margin:0 0 8px;font-size:18px;color:#222">Clásica (120g)</h3>
+            <p style="color:#666;font-size:14px;flex:1;margin:0 0 12px">Carne, vegetales, cremas, pan artesanal, papas y camote. Presentación 120g.</p>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div style="font-weight:800;color:#222">S/10</div>
+              <a class="order-btn" href="#" data-name="Clásica" data-price="S/10" style="margin-left:auto;background:#ff7f11;color:#fff;padding:10px 12px;border-radius:10px;text-decoration:none;font-weight:700;cursor:pointer" target="_blank">Ordenar ahora</a>
+            </div>
+          </div>
+        </article>
+      </li>
+
+      <li class="food-item" data-category="hamburguesas" data-name="Cheese">
+        <article class="card" style="background:#fff;border-radius:14px;box-shadow:0 8px 28px rgba(0,0,0,0.08);overflow:hidden;display:flex;flex-direction:column;height:100%;">
+          <div class="card-media" style="height:170px;overflow:hidden;">
+            <img src="./assets/images/cheese.jpg" alt="Cheese" style="width:100%;height:100%;object-fit:cover;display:block;">
+          </div>
+          <div class="card-body" style="padding:14px;flex:1;display:flex;flex-direction:column;">
+            <p class="category" style="font-size:13px;color:#ff7f11;margin:0 0 6px;font-weight:700">Hamburguesas</p>
+            <h3 style="margin:0 0 8px;font-size:18px;color:#222">Cheese (120g)</h3>
+            <p style="color:#666;font-size:14px;flex:1;margin:0 0 12px">Carne con doble queso, vegetales y cremas. Sabor clásico y jugoso.</p>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div style="font-weight:800;color:#222">S/12</div>
+              <a class="order-btn" href="#" data-name="Cheese" data-price="S/12" style="margin-left:auto;background:#ff7f11;color:#fff;padding:10px 12px;border-radius:10px;text-decoration:none;font-weight:700;cursor:pointer" target="_blank">Ordenar ahora</a>
+            </div>
+          </div>
+        </article>
+      </li>
+
+      <li class="food-item" data-category="hamburguesas" data-name="Royal">
+        <article class="card" style="background:#fff;border-radius:14px;box-shadow:0 8px 28px rgba(0,0,0,0.08);overflow:hidden;display:flex;flex-direction:column;height:100%;">
+          <div class="card-media" style="height:170px;overflow:hidden;">
+            <img src="./assets/images/royal.jpg" alt="Royal" style="width:100%;height:100%;object-fit:cover;display:block;">
+          </div>
+          <div class="card-body" style="padding:14px;flex:1;display:flex;flex-direction:column;">
+            <p class="category" style="font-size:13px;color:#ff7f11;margin:0 0 6px;font-weight:700">Hamburguesas</p>
+            <h3 style="margin:0 0 8px;font-size:18px;color:#222">Royal (120g)</h3>
+            <p style="color:#666;font-size:14px;flex:1;margin:0 0 12px">Carne con huevo frito, queso, vegetales y cremas. Sabor contundente.</p>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div style="font-weight:800;color:#222">S/13</div>
+              <a class="order-btn" href="#" data-name="Royal" data-price="S/13" style="margin-left:auto;background:#ff7f11;color:#fff;padding:10px 12px;border-radius:10px;text-decoration:none;font-weight:700;cursor:pointer" target="_blank">Ordenar ahora</a>
+            </div>
+          </div>
+        </article>
+      </li>
+
+      <!-- ejemplos extra: Choripán -->
+      <li class="food-item" data-category="hamburguesas" data-name="Choripán">
+        <article class="card" style="background:#fff;border-radius:14px;box-shadow:0 8px 28px rgba(0,0,0,0.08);overflow:hidden;display:flex;flex-direction:column;height:100%;">
+          <div class="card-media" style="height:170px;overflow:hidden;">
+            <img src="./assets/images/choripan.jpg" alt="Choripán" style="width:100%;height:100%;object-fit:cover;display:block;">
+          </div>
+          <div class="card-body" style="padding:14px;flex:1;display:flex;flex-direction:column;">
+            <p class="category" style="font-size:13px;color:#ff7f11;margin:0 0 6px;font-weight:700">Hamburguesas</p>
+            <h3 style="margin:0 0 8px;font-size:18px;color:#222">Choripán</h3>
+            <p style="color:#666;font-size:14px;flex:1;margin:0 0 12px">Chorizo con pan artesanal, cremas y papas. Un clásico para compartir.</p>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div style="font-weight:800;color:#222">S/10</div>
+              <a class="order-btn" href="#" data-name="Choripán" data-price="S/10" style="margin-left:auto;background:#ff7f11;color:#fff;padding:10px 12px;border-radius:10px;text-decoration:none;font-weight:700;cursor:pointer" target="_blank">Ordenar ahora</a>
+            </div>
+          </div>
+        </article>
+      </li>
+
+      <!-- ======= Bebidas calientes (ejemplos sin imagen) ======= -->
+      <li class="food-item" data-category="bebidascalientes" data-name="Capuchino">
+        <article class="card" style="background:#fff;border-radius:14px;box-shadow:0 8px 28px rgba(0,0,0,0.08);overflow:hidden;display:flex;flex-direction:column;height:100%;">
+          <div class="card-media" style="height:170px;display:flex;align-items:center;justify-content:center;background:#fafafa;">
+            <img src="./assets/images/capuchino.jpg" alt="Capuchino" style="width:60%;height:auto;object-fit:contain;display:block;opacity:0.9;">
+          </div>
+          <div class="card-body" style="padding:14px;flex:1;display:flex;flex-direction:column;">
+            <p class="category" style="font-size:13px;color:#ff7f11;margin:0 0 6px;font-weight:700">Bebidas Calientes</p>
+            <h3 style="margin:0 0 8px;font-size:18px;color:#222">Capuchino</h3>
+            <p style="color:#666;font-size:14px;flex:1;margin:0 0 12px">Café cremoso con espuma de leche — perfecto para acompañar tu plato.</p>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div style="font-weight:800;color:#222">S/10</div>
+              <a class="order-btn" href="#" data-name="Capuchino" data-price="S/10" style="margin-left:auto;background:#ff7f11;color:#fff;padding:10px 12px;border-radius:10px;text-decoration:none;font-weight:700;cursor:pointer" target="_blank">Ordenar ahora</a>
+            </div>
+          </div>
+        </article>
+      </li>
+
+    </ul> <!-- /food-grid -->
+
+  </div> <!-- /container -->
+</section>
+
+<!-- =========================
+  SCRIPTS: filtrado + búsqueda + WhatsApp prellenado
+========================= -->
+<script>
+(function(){
+  const filterButtons = document.querySelectorAll('.filter-btn');
+  const items = Array.from(document.querySelectorAll('.food-item'));
+  const searchInput = document.getElementById('menu-search');
+  const clearBtn = document.getElementById('search-clear');
+
+  // Filtrar por botón
+  filterButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterButtons.forEach(b=>b.style.background='#f0f0f0', b=>b.classList.remove('active'));
+      filterButtons.forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      btn.style.background = '#ff7f11';
+      btn.style.color = '#fff';
+
+      const filter = btn.getAttribute('data-filter');
+      applyFilterAndSearch(filter, searchInput.value.trim().toLowerCase());
+      // scroll to top of menu so user sees results
+      document.getElementById('menu-catalog').scrollIntoView({behavior:'smooth'});
+    });
+  });
+
+  // Buscar por texto (nombre o categoría)
+  function applyFilterAndSearch(filter, q) {
+    items.forEach(li => {
+      const cat = (li.getAttribute('data-category') || '').toLowerCase();
+      const name = (li.getAttribute('data-name') || '').toLowerCase();
+      const matchesFilter = (filter === 'all') || (cat.indexOf(filter) !== -1);
+      const matchesQuery = q === '' || name.indexOf(q) !== -1 || cat.indexOf(q) !== -1;
+      if (matchesFilter && matchesQuery) {
+        li.style.display = 'block';
+        // subtle reveal
+        li.style.opacity = '1';
+        li.style.transform = 'scale(1)';
+      } else {
+        li.style.display = 'none';
+      }
+    });
+  }
+
+  // input event
+  searchInput.addEventListener('input', () => {
+    const activeBtn = document.querySelector('.filter-btn.active');
+    const filter = activeBtn ? activeBtn.getAttribute('data-filter') : 'all';
+    applyFilterAndSearch(filter, searchInput.value.trim().toLowerCase());
+  });
+
+  clearBtn.addEventListener('click', () => {
+    searchInput.value = '';
+    const activeBtn = document.querySelector('.filter-btn.active');
+    const filter = activeBtn ? activeBtn.getAttribute('data-filter') : 'all';
+    applyFilterAndSearch(filter, '');
+  });
+
+  // Ordenar ahora: abrir WhatsApp con mensaje prellenado (número: 51970805350)
+  const WA_NUMBER = '51970805350';
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest('.order-btn');
+    if (!a) return;
+    e.preventDefault();
+    const name = a.getAttribute('data-name') || 'Pedido';
+    const price = a.getAttribute('data-price') || '';
+    const text = `Hola! Quisiera hacer un pedido: *${name}* ${price ? '('+price+')' : ''} - Por favor indiquen disponibilidad y tiempo de entrega.`;
+    const url = `https://wa.me/${WA_NUMBER}?text=` + encodeURIComponent(text);
+    window.open(url, '_blank');
+  });
+
+  // Inicial: mostrar todo
+  applyFilterAndSearch('all', '');
+})();
+</script> 
+      </section>
+                </div>
+              </div>
+            </li>
+
+          </ul>
+
+
+        </div>
+      </section>
+
+
+
+
+
+      <!-- 
+        - #CTA
+      -->
+
+      <section class="section section-divider white cta" style="background-image: url('./assets/images/hero-bg.jpg')">
+        <div class="container">
+
+          <div class="cta-content">
+
+            <h2 class="h2 section-title">
+              El entusiasta anhela saborear
+              <span class="span">hamburguesas irresistibles y de calidad!</span>
+            </h2>
+
+            <p class="section-text">
+              Bienvenidos a Liberatos, tu mejor opción en comida rápida. Disfruta de nuestras pizzas, hamburguesas, papas fritas, pollo broaster y mucho más, preparados con ingredientes frescos y el mejor sabor. ¡En Liberatos, comer rico es una experiencia!
+            </p>
+<!-- 🌟 BOTÓN ADICIONAL -->
+<div class="order-now-container" style="text-align:center; margin-top:20px;">
+  <button class="btn btn-hover" id="extra-ordenar">Ordene ahora</button>
+</div>
+
+<!-- ✨ ESTILOS -->
+<style>
+.btn.btn-hover {
+  background-color: #ff7f11;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 24px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+.btn.btn-hover:hover {
+  background-color: #ff932b;
+  transform: scale(1.05);
+}
+</style>
+
+<!-- ⚙️ SCRIPT FUNCIONAL -->
+<script>
+// 🔹 Tomamos el botón original y el nuevo
+const botonOriginal = document.querySelector('#ord-abrir');
+const botonExtra = document.querySelector('#extra-ordenar');
+
+// 🔹 Reutilizamos la función original del botón "Hacer Pedido"
+if (botonOriginal && botonExtra) {
+  botonExtra.addEventListener('click', e => {
+    e.preventDefault();
+    // Simula el clic del botón original
+    botonOriginal.click();
+  });
+}
+</script>
+
+
+          </div>
+
+          <figure class="cta-banner">
+            <img src="./assets/images/cta-banner.png" width="700" height="637" loading="lazy" alt="Burger"
+              class="w-100 cta-img">
+
+            <img src="./assets/images/sale-shape.png" width="216" height="226" loading="lazy"
+              alt="get up to 50% off now" class="abs-img scale-up-anim">
+          </figure>
+
+        </div>
+      </section>
+
+
+
+      <!-- 
+        - #Info
+      -->
+       <section class="social-section" id="redes">
+  <div class="container-social">
+    <h3 class="social-title">¡Síguenos en nuestras redes!</h3>
+    <p style="color: #666; margin-bottom: 20px;">Entérate de nuestras promos y eventos rockeros 🎸</p>
+    
+    <ul class="social-links">
+      <li>
+        <a href="https://www.facebook.com/people/Liberatos/100086670560201/" target="_blank" aria-label="Facebook">
+          <ion-icon name="logo-facebook"></ion-icon>
+        </a>
+      </li>
+      <li>
+        <a href="https://www.instagram.com/liberatosrock/" target="_blank" aria-label="Instagram">
+          <ion-icon name="logo-instagram"></ion-icon>
+        </a>
+      </li>
+      <li>
+        <a href="https://wa.link/s6v3ai" target="_blank" aria-label="WhatsApp">
+          <ion-icon name="logo-whatsapp"></ion-icon>
+        </a>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<footer class="footer">
+    <div class="footer-top">
+        <div class="container footer-top-container">
+            
+            <div class="footer-brand">
+                <a href="#" class="logo">Liberatos<span class="span">.</span></a>
+                
+                <p class="footer-text">
+                    La mejor experiencia de sabor y rock en Los Olivos. 
+                    ¡Te esperamos!
+                </p>
+
+                <ul class="contact-list">
+                    <li>
+                        <div class="contact-icon"><ion-icon name="location-outline"></ion-icon></div>
+                        <address>Av. Sta Elvira 6000, Los Olivos 15306, Perú</address>
+                    </li>
+                    <li>
+                        <div class="contact-icon"><ion-icon name="call-outline"></ion-icon></div>
+                        <a href="tel:+51970805350" class="contact-link">+51 970 805 350</a>
+                    </li>
+                    <li>
+                        <div class="contact-icon"><ion-icon name="mail-outline"></ion-icon></div>
+                        <a href="mailto:rockliberatos@gmail.com" class="contact-link">rockliberatos@gmail.com</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="footer-list-col">
+                <p class="footer-list-title">Horario de apertura</p>
+                <ul class="footer-list">
+                    <li>
+                        <span class="day">Lunes - Viernes:</span>
+                        <span class="time">9:00 - 23:00</span>
+                    </li>
+                    <li>
+                        <span class="day">Sábado:</span>
+                        <span class="time">9:00 - 23:00</span>
+                    </li>
+                    <li>
+                        <span class="day">Domingos:</span>
+                        <span class="time">9:00 - 23:00</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="footer-list-col">
+                <p class="footer-list-title">Ubícanos</p>
+                <div class="mapa-wrapper">
+                    <iframe 
+                        width="100%" 
+                        height="200" 
+                        frameborder="0" 
+                        scrolling="no" 
+                        marginheight="0" 
+                        marginwidth="0" 
+                        src="https://maps.google.com/maps?q=Av.+Sta+Elvira+6000,+Los+Olivos&t=&z=15&ie=UTF8&iwloc=&output=embed">
+                    </iframe>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <p class="copyright">
+            © 2025 <a href="#" class="copyright-link">Liberatos</a>. Todos los derechos reservados.
+        </p>
+    </div>
+</footer>
+
+<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+
+<style>
+/* =========================================
+   ESTILOS REDES SOCIALES
+========================================= */
+.social-section {
+    background: #f4f4f4;
+    padding: 40px 20px;
+    text-align: center;
+    border-top: 4px solid #ff7f11;
+}
+.container-social { max-width: 600px; margin: auto; }
+.social-title { font-size: 1.8rem; color: #222; margin-bottom: 10px; }
+
+.social-links {
+    list-style: none; padding: 0; display: flex; justify-content: center; gap: 20px;
+    margin-top: 20px;
+}
+.social-links li a {
+    display: flex; align-items: center; justify-content: center;
+    width: 60px; height: 60px;
+    background: #222; color: #fff;
+    border-radius: 50%; font-size: 30px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+.social-links li a:hover {
+    background: #ff7f11; /* Naranja Liberatos */
+    transform: translateY(-5px) rotate(10deg);
+}
+
+/* =========================================
+   ESTILOS FOOTER (NUEVO DISEÑO)
+========================================= */
+.footer { background-color: #1a1a1a; color: #ccc; font-family: sans-serif; }
+.footer-top { padding-block: 60px; }
+
+.container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+.footer-top-container {
+    display: grid;
+    gap: 40px;
+}
+
+/* RESPONSIVE: Celular 1 columna, PC 3 columnas */
+@media (min-width: 768px) {
+    .footer-top-container { grid-template-columns: 1.5fr 1fr 1fr; }
+}
+
+/* 1. MARCA / LOGO */
+.footer-brand .logo {
+    font-size: 2.8rem;
+    color: #fff;
+    font-weight: 800;
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 15px;
+    font-family: 'Impact', sans-serif;
+    letter-spacing: 1px;
+}
+.footer-brand .span { color: #ff7f11; }
+
+.footer-text { margin-bottom: 20px; line-height: 1.6; }
+
+.contact-list { list-style: none; padding: 0; }
+.contact-list li {
+    display: flex; align-items: flex-start; gap: 10px; margin-bottom: 15px;
+}
+.contact-icon { color: #ff7f11; font-size: 1.2rem; margin-top: 3px; }
+.contact-link { color: inherit; text-decoration: none; transition: 0.3s; }
+.contact-link:hover { color: #ff7f11; }
+
+/* 2. LISTAS Y TÍTULOS */
+.footer-list-title {
+    color: #fff;
+    font-size: 1.4rem;
+    font-weight: bold;
+    margin-bottom: 25px;
+    position: relative;
+    display: inline-block;
+}
+/* SE ELIMINÓ LA REGLA .footer-list-title::after QUE CREABA LA LÍNEA */
+
+.footer-list { list-style: none; padding: 0; }
+.footer-list li {
+    display: flex; justify-content: space-between;
+    padding-bottom: 12px; border-bottom: 1px solid #333; margin-bottom: 12px;
+}
+.footer-list .day { color: #fff; font-weight: 500; }
+
+/* 3. MAPA */
+.mapa-wrapper { border-radius: 12px; overflow: hidden; border: 2px solid #333; height: 200px; }
+
+/* 4. COPYRIGHT */
+.footer-bottom {
+    background-color: #111;
+    padding: 20px;
+    text-align: center;
+    border-top: 1px solid #222;
+}
+.copyright-link { color: #ff7f11; text-decoration: none; font-weight: bold; }
+</style>
